@@ -1,6 +1,5 @@
 import { Outlet } from 'react-router-dom';
 import Footer from '@/components/layout/Footer';
-import Header from '@/components/layout/Header';
 import Sidebar from '@/components/layout/Sidebar';
 
 export default function MainLayout() {
@@ -8,8 +7,7 @@ export default function MainLayout() {
     <div className="min-h-screen flex">
        <Sidebar />
         <div className="flex flex-1 flex-col">
-        <Header />
-        <main className="flex-1 p-6">
+        <main className="flex-1 bg-[#f3f3f0]">
           <Outlet />
         </main>
         <Footer />
