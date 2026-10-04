@@ -19,6 +19,7 @@ export interface MultiSelectProps {
   placeholder?: string;
   searchPlaceholder?: string;
   invalid?: boolean;
+  required?: boolean;
   className?: string;
 }
 

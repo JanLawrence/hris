@@ -4,9 +4,9 @@ import FieldWrapper, { type FieldWrapperProps } from './FieldWrapper';
 
 type InputFieldProps = FieldWrapperProps & ComponentProps<typeof Input>;
 
-export default function InputField({ label, name, description, error, ...inputProps }: InputFieldProps) {
+export default function InputField({ label, name, description, error, required, ...inputProps }: InputFieldProps) {
   return (
-    <FieldWrapper label={label} name={name} description={description} error={error}>
+    <FieldWrapper label={label} name={name} description={description} error={error} required={required}>
       <Input
         id={name}
         name={name}

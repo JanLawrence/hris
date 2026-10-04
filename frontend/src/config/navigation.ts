@@ -1,4 +1,4 @@
-import { BarChart, UserRoundGroup, type LucideIcon } from "lucide-react";
+import { BarChart, UserRoundGroup, Settings, type LucideIcon } from "lucide-react";
 
 export type Role = 'admin' | 'hr' | 'employee';
 
@@ -33,6 +33,11 @@ export const navGroups: NavGroup[] = [
                 to: '/employees',
                 label: 'Employees',
                 icon: UserRoundGroup
+            },
+            {
+                to: '/settings',
+                label: 'Settings',
+                icon: Settings
             }
         ]
     }
