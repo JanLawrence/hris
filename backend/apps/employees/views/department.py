@@ -17,7 +17,7 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     #     return super().create(request, *args, **kwargs)
 
     def list(self, request, *args, **kwargs):
-        time.sleep(2)  # TEST LANG ulet
+        # time.sleep(2)  # TEST LANG ulet
         return super().list(request, *args, **kwargs)
 
     def get_queryset(self):
