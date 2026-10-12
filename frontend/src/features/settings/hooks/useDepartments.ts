@@ -27,9 +27,10 @@
 //   return { data, loading, error, refetch: fetchData };
 // }
 
-
+import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query';
 import { getDepartments } from '@/api/departments';
+import type { Option } from '@/components/form/MultiSelect';
 
 export const DEPARTMENTS_KEY = ['departments'];
 
@@ -38,4 +39,18 @@ export function useDepartments() {
     queryKey: DEPARTMENTS_KEY,
     queryFn: () => getDepartments().then((res) => res.data),
   });
+}
+
+export function useDepartmentOptions() {
+  const { data: departments = [], isLoading } = useDepartments();
+
+  const options: Option[] = useMemo(
+    () =>
+      departments
+        .filter((dept) => dept.is_active)
+        .map((dept) => ({ value: String(dept.id), label: dept.name })),
+    [departments]
+  );
+
+  return { options, isLoading };
 }
