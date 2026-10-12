@@ -15,6 +15,11 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     # def create(self, request, *args, **kwargs):
     #     time.sleep(2)  # TEST LANG
     #     return super().create(request, *args, **kwargs)
+
+    def list(self, request, *args, **kwargs):
+        time.sleep(2)  # TEST LANG ulet
+        return super().list(request, *args, **kwargs)
+
     def get_queryset(self):
         return Department.objects.annotate(employee_count=Count("employees"))
 
