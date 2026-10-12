@@ -2,32 +2,26 @@ import InputField from '@/components/form/InputField'
 import MultiSelectField from '@/components/form/MultiSelectField'
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from "@/components/ui/button-group"
-import type { Option } from '@/components/form/MultiSelect';
 import { CirclePlus } from 'lucide-react'
+import { employmentTypeOptions } from '../constants';
 import {
   Table,
   TableBody,
-  TableCaption,
   TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
+import { useDepartmentOptions } from '@/features/settings/hooks/useDepartments';
 
 export default function EmployeesPage() {
 
-  const departmentOptions: Option[] = [
-    { value: 'IT', label: 'IT' },
-    { value: 'Accountant', label: 'Accountant' },
-    { value: 'HR', label: 'Human Resources' },
-    { value: 'Admin', label: 'Admin' },
-  ];
-  const employmentTypeOptions: Option[] = [
-    { value: 'Regular', label: 'Regular' },
-    { value: 'Probationary', label: 'Probationary' },
-    { value: 'Contractual', label: 'Contractual' },
-  ];
+  const navigate = useNavigate();
+
+  const { options: departmentOptions, isLoading: isLoadingOptions } = useDepartmentOptions();
+
   
   const [department, setDepartment] = useState<string[]>([]);
   const [employmentType, setEmploymentType] = useState<string[]>([]);
@@ -39,7 +33,7 @@ export default function EmployeesPage() {
         <div className="flex items-center gap-2">
           <h1 className="font-semibold text-md">Employees</h1>
         </div>
-        <Button variant={'default'} size={'lg'} className={'gap-1'}><CirclePlus /> Add Employee</Button>
+        <Button variant={'default'} size={'lg'} className={'gap-1'}  onClick={() => navigate('/employees/form/add')}><CirclePlus /> Add Employee</Button>
       </header>
       <header className="border-b border-gray-200 flex items-center justify-between px-6 py-5 bg-[#fafaf8]">
         <div className="grid w-full max-w-4xl grid-cols-[3fr_1fr_1fr] gap-4">
@@ -50,6 +44,7 @@ export default function EmployeesPage() {
             options={departmentOptions}
             value={department}
             onChange={setDepartment}
+            loading={isLoadingOptions}
             placeholder="Select Department"
           />
           <MultiSelectField
