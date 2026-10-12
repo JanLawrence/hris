@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ChevronDown, Search, X } from 'lucide-react';
+import { ChevronDown, Loader2, Search, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { Input } from '@/components/ui/input';
@@ -20,6 +20,8 @@ export interface MultiSelectProps {
   searchPlaceholder?: string;
   invalid?: boolean;
   required?: boolean;
+  disabled?: boolean;
+  loading?: boolean;
   className?: string;
 }
 
@@ -31,6 +33,8 @@ export default function MultiSelect({
   placeholder = 'Select...',
   searchPlaceholder = 'Search...',
   invalid,
+  disabled = false,
+  loading = false,
   className,
 }: MultiSelectProps) {
   const [search, setSearch] = useState('');
@@ -54,30 +58,37 @@ export default function MultiSelect({
     .filter((opt) => value.includes(opt.value))
     .map((opt) => opt.label);
 
-  const triggerText =
-    selectedLabels.length === 0
+  const triggerText = loading
+    ? 'Loading...'
+    : selectedLabels.length === 0
       ? placeholder
       : selectedLabels.length <= 2
         ? selectedLabels.join(', ')
         : `${selectedLabels.length} selected`;
-
+  
   return (
     <Popover onOpenChange={(open) => !open && setSearch('')}>
       <PopoverTrigger
+        disabled={disabled || loading}
         render={
           <Button
             id={id}
             variant="input"
             size="lg"
             aria-invalid={invalid}
+            disabled={disabled || loading}
             className={cn('w-full justify-between font-normal', className)}
           />
         }
       >
-        <span className={cn('truncate', value.length === 0 && 'text-muted-foreground')}>
+        <span className={cn('truncate', (value.length === 0 || loading) && 'text-muted-foreground')}>
           {triggerText}
         </span>
-        <ChevronDown className="size-4 opacity-50" />
+        {loading ? (
+          <Loader2 className="size-4 animate-spin opacity-50" />
+        ) : (
+          <ChevronDown className="size-4 opacity-50" />
+        )}
       </PopoverTrigger>
 
       <PopoverContent align="start" className="w-(--anchor-width) min-w-56 p-0">
