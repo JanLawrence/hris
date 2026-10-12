@@ -1,5 +1,6 @@
 export interface Employee {
     id: number;
+    full_name: string
     employee_no: string;
     first_name: string; 
     middle_name: string;
@@ -10,9 +11,12 @@ export interface Employee {
     mobile_no: string; 
     present_address: string;
     permanent_address: string;
+    department_name: string;
     department: number | null;
+    position_title: string;
     position: number | null;
     employment_type: string;
+    employment_type_display: string;
     work_setup: string;
     hire_date: string;
     is_active: boolean;

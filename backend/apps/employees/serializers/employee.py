@@ -10,12 +10,13 @@ class EmployeeSerializer(serializers.ModelSerializer):
     department_name = serializers.CharField(source="department.name", read_only=True, default=None)
     position_title = serializers.CharField(source="position.title", read_only=True, default=None)
     reports_to_name = serializers.SerializerMethodField()
+    full_name = serializers.SerializerMethodField()
     employment_type_display = serializers.CharField(source="get_employment_type_display", read_only=True)
 
     class Meta:
         model = Employee
         fields = [
-            "id", "employee_no",
+            "id", "employee_no", "full_name",
             "first_name", "middle_name", "last_name", "email", "mobile_no", "birth_date",
             "civil_status", "present_address", "permanent_address",
             "emergency_contact_name", "emergency_contact_relationship", "emergency_contact_mobile",
@@ -32,6 +33,9 @@ class EmployeeSerializer(serializers.ModelSerializer):
     def get_reports_to_name(self, obj):
         m = obj.reports_to
         return f"{m.first_name} {m.last_name}" if m else None
+
+    def get_full_name(self, obj):
+        return f"{obj.first_name} {obj.middle_name} {obj.last_name}" if obj else None
 
     def validate_reports_to(self, manager):
         # Hindi tinatawag ng DRF ang model.clean(), kaya ulitin dito

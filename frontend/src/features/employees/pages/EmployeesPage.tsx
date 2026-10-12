@@ -2,8 +2,10 @@ import InputField from '@/components/form/InputField'
 import MultiSelectField from '@/components/form/MultiSelectField'
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from "@/components/ui/button-group"
-import { CirclePlus } from 'lucide-react'
+import { Badge } from '@/components/ui/badge';
+import ActionButton from '@/components/table/ActionButton';
 import { employmentTypeOptions } from '../constants';
+import { CirclePlus, Trash2Icon } from 'lucide-react';
 import {
   Table,
   TableBody,
@@ -15,16 +17,26 @@ import {
 import { useNavigate } from 'react-router-dom';
 import { useState } from 'react';
 import { useDepartmentOptions } from '@/features/settings/hooks/useDepartments';
+import { useEmployees } from '../hooks/useEmployees';
+import type { Employee } from '@/types/employee';
 
 export default function EmployeesPage() {
 
   const navigate = useNavigate();
+  const { data = [], isLoading, error } = useEmployees();
 
   const { options: departmentOptions, isLoading: isLoadingOptions } = useDepartmentOptions();
 
   
   const [department, setDepartment] = useState<string[]>([]);
   const [employmentType, setEmploymentType] = useState<string[]>([]);
+
+  const openEdit = (emp: Employee) => {
+    return
+  }
+  const handleDelete = async (emp: Employee) => {
+    return
+  }
 
  
   return (
@@ -65,30 +77,50 @@ export default function EmployeesPage() {
         </div>
       </header>
       <div className="mx-5 my-5 overflow-hidden rounded-sm border border-gray-200 bg-white">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>ID</TableHead>
-              <TableHead>Name</TableHead>
-              <TableHead>Position</TableHead>
-              <TableHead>Department</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Date Hired</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            <TableRow>
-              <TableCell>EMP-00002</TableCell>
-              <TableCell>Jan Tolentino</TableCell>
-              <TableCell>Full Stack Engineer</TableCell>
-              <TableCell>IT</TableCell>
-              <TableCell>Regular</TableCell>
-              <TableCell>Oct 2022</TableCell>
-              <TableCell>Active</TableCell>
-            </TableRow>
-          </TableBody>
-        </Table>
+
+        {isLoading && <p className="p-4 text-sm text-muted-foreground">Loading...</p>}
+        {error && <p className="p-4 text-sm text-destructive">Failed to load employees.</p>}
+
+        {!isLoading && !error && data.length === 0 && (
+          <p className="p-4 text-sm text-muted-foreground">No employees yet.</p>
+        )}
+
+        {!isLoading && !error && data.length > 0 && (
+          <Table>
+            <TableHeader>
+              <TableRow>
+                <TableHead>ID</TableHead>
+                <TableHead>Name</TableHead>
+                <TableHead>Position</TableHead>
+                <TableHead>Department</TableHead>
+                <TableHead>Type</TableHead>
+                <TableHead>Date Hired</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead />
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {data.map((emp) => (
+                <TableRow key={emp.id}>
+                  <TableCell>{emp.employee_no}</TableCell>
+                  <TableCell>{emp.full_name}</TableCell>
+                  <TableCell>{emp.position_title}</TableCell>
+                  <TableCell>{emp.department_name}</TableCell>
+                  <TableCell>{emp.employment_type_display}</TableCell>
+                  <TableCell>{emp.hire_date}</TableCell>
+                  <TableCell>
+                    <Badge variant={emp.is_active ? 'default' : 'secondary'}>
+                      {emp.is_active ? 'Active' : 'Inactive'}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <ActionButton onEdit={() => openEdit(emp)} onDelete={() => handleDelete(emp)} />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        )}
       </div>
     </>
   )
