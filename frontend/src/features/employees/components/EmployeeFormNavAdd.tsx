@@ -35,6 +35,59 @@ const STEPS = [
     { title: "Review", subtitle: "Check and create" },
 ]
 
+const INITIAL_FORM = {
+    first_name: "", 
+    middle_name: "", 
+    last_name: "", 
+    birth_date: "", 
+    civil_status: "single", 
+    email: "", 
+    mobile_no: "", 
+    present_address: "",
+    permanent_address: "",
+    department: "",
+    position: "",
+    employment_type: "probationary",
+    work_setup: "onsite",
+    hire_date: "",
+}
+
+const REQUIRED_FIELDS: (keyof EmployeeForm)[] = [
+    "first_name", "last_name", "birth_date", "civil_status", "email", "mobile_no", "present_address", "permanent_address",
+    "department", "position", "employment_type", "work_setup", "hire_date"
+]
+
+const STEP_FIELDS: (keyof EmployeeForm)[][] = [
+    ["first_name", "middle_name", "last_name", "birth_date", "civil_status", "email", "mobile_no", "present_address", "permanent_address"],
+    ["department", "position", "employment_type", "work_setup", "hire_date"],
+]
+
+type EmployeeForm = typeof INITIAL_FORM
+type FieldErrors = Partial<Record<keyof EmployeeForm, string>>
+
+function validateStep(step: number, form: EmployeeForm): FieldErrors {
+    const errors: FieldErrors = {}
+
+    for (const field of STEP_FIELDS[step]) {
+        const isFieldRequired = REQUIRED_FIELDS.includes(field);
+
+        if (isFieldRequired && !form[field].trim()) {
+            errors[field] = 'This field is required.';
+        }
+    }
+
+    if (step === 0) {
+        if (!errors.email && !/^\S+@\S+\.\S+$/.test(form.email)) {
+            errors.email = 'Enter a valid email address.'
+        }
+        if (!errors.mobile_no && !/^09\d{9}$/.test(form.mobile_no)){
+            errors.mobile_no = 'Enter a valid mobile number. e.g. 09177461299'
+        }
+    }
+
+    return errors
+}
+
 const labelOf = (options: Option[], value: string) =>
     options.find((o) => o.value === value)?.label ?? ""
 
@@ -65,6 +118,7 @@ function ReviewRow({ label, value }: { label: string; value: string }) {
     )
 }
 
+
 export default function EmployeeFormNavAdd(){
     const navigate = useNavigate();
     const [current, setCurrent] = useState(0)
@@ -73,22 +127,9 @@ export default function EmployeeFormNavAdd(){
     const { options: departmentOptions, isLoading: isLoadingDepartmentOptions } = useDepartmentOptions();
     const { options: positionOptions, isLoading: isLoadingPositionOptions } = usePositionOptions();
 
-    const [form, setForm] = useState({
-        first_name: "", 
-        middle_name: "", 
-        last_name: "", 
-        birth_date: "", 
-        civil_status: "single", 
-        email: "", 
-        mobile_no: "", 
-        present_address: "",
-        permanent_address: "",
-        department: "",
-        position: "",
-        employment_type: "probationary",
-        work_setup: "onsite",
-        hire_date: "",
-    })
+    const [form, setForm] = useState(INITIAL_FORM)
+    const [errors, setErrors] = useState<FieldErrors>({})
+
 
     const [sameAsPresent, setSameAsPresent] = useState(false)
 
@@ -99,14 +140,27 @@ export default function EmployeeFormNavAdd(){
 
     const isLast = current === STEPS.length - 1
 
-    const update = (field: keyof typeof form, value: string) =>
+    const update = (field: keyof EmployeeForm, value: string) => {
         setForm((prev) => ({ ...prev, [field]: value }))
+        setErrors((prev) => ({...prev, [field]: undefined }))
+    }
 
     const handleSameAsPresent = (checked: boolean) => {
         setSameAsPresent(checked)
         if (checked) {
             update('permanent_address', form.present_address)
         }
+    }
+
+    const handleNext = () => {
+        const newErrors = validateStep(current, form)
+        setErrors(newErrors)
+
+        if (Object.keys(newErrors).length > 0) {
+            return;
+        }
+        setCurrent(current + 1)
+        
     }
 
     const handleCreate = () => {
@@ -116,11 +170,12 @@ export default function EmployeeFormNavAdd(){
             position: form.position ? Number(form.position) : null,
         }
 
+        setErrors({})
+
         const toastId = toast.add({ type: 'loading', title: 'Saving employee...'});
       
         saveEmployee.mutate(
           {
-            // id: null,
             data: payload,
           },
           {
@@ -130,16 +185,21 @@ export default function EmployeeFormNavAdd(){
             },
             onError: (err) => {
                 const data = (err as AxiosError<Record<string, string[]>>).response?.data;
-                toast.update(toastId, { type: 'error', title: 'Failed to save employee. Please try again.' })
-                // if (data?.name || data?.code) {
-                //     toast.close(toastId);
-                //     setErrors({
-                //         name: capitalize(data.name?.[0]),
-                //         code: capitalize(data.code?.[0]),
-                //     });
-                // } else {
-                //     toast.update(toastId, { type: 'error', title: 'Failed to save employee. Please try again.' })
-                // }
+                if (data) {
+                    const newErrors: FieldErrors = {}
+                    for (const field in data) {
+                        newErrors[field as keyof EmployeeForm] = data[field][0]
+                    }
+                    setErrors(newErrors)
+                    const errorStep = STEP_FIELDS.findIndex((fields) => fields.some((f) => f in newErrors))
+                    if (errorStep !== -1) {
+                        setCurrent(errorStep)
+                    }
+
+                    toast.update(toastId, { type: 'error', title: 'Please check fields with error.' })
+                } else {
+                    toast.update(toastId, { type: 'error', title: 'Failed to save employee. Please try again.' })
+                }
             },
           }
         );
@@ -218,31 +278,32 @@ export default function EmployeeFormNavAdd(){
                         { current === 0 && (
                             <div className="flex flex-col gap-y-5">
                                 <div className="grid grid-cols-3 gap-x-4 gap-y-5">
-                                    <InputField name="first_name" label="First Name" autoFocus required={true}
+                                    <InputField name="first_name" label="First Name" autoFocus required={true} error={errors.first_name}
                                         value={form.first_name} onChange={(e) => update('first_name', e.target.value)} />
-                                    <InputField name="middle_name" label="Middle Name"
+                                    <InputField name="middle_name" label="Middle Name" error={errors.middle_name}
                                         value={form.middle_name} onChange={(e) => update('middle_name', e.target.value)} />
-                                    <InputField name="last_name" label="Last Name" required={true}
+                                    <InputField name="last_name" label="Last Name" required={true} error={errors.last_name}
                                         value={form.last_name} onChange={(e) => update('last_name', e.target.value)} />
                                 </div>
                                 <div className="grid grid-cols-2 gap-x-4 gap-y-5">
                                     <DatePickerField label="Birth Date" name="birth_date" required
-                                        value={form.birth_date ? parseISO(form.birth_date) : undefined}
+                                        value={form.birth_date ? parseISO(form.birth_date) : undefined} error={errors.birth_date}
                                         onChange={(date) => update('birth_date', date ? format(date, 'yyyy-MM-dd') : '')}
                                         maxDate={new Date()} />
                                     <SelectField
-                                        label="Civil Status"
+                                        label="Civil Status" 
                                         name="civil_status"
                                         options={civilStatusOption}
                                         value={form.civil_status}
                                         onChange={(v) => update('civil_status', v)}
                                         placeholder="Select Civil Status"
+                                        error={errors.civil_status}
                                     />
                                 </div>
                                 <div className="grid grid-cols-2 gap-x-4 gap-y-5">
-                                    <InputField name="email" label="Email" required={true} type="email"
+                                    <InputField name="email" label="Email" required={true} type="email" error={errors.email}
                                         value={form.email} onChange={(e) => update('email', e.target.value)} />
-                                    <InputField name="mobile_no" label="Mobile No." required={true}
+                                    <InputField name="mobile_no" label="Mobile No." required={true} error={errors.mobile_no}
                                         value={form.mobile_no} onChange={(e) => update('mobile_no', e.target.value)} />
                                 </div>
                                 <div className="grid grid-cols-2  gap-x-4 gap-y-5">
@@ -254,6 +315,7 @@ export default function EmployeeFormNavAdd(){
                                                     update('permanent_address', e.target.value)
                                                 }
                                             }} 
+                                            error={errors.present_address}
                                         />
                                         <label className="mt-2 flex items-center gap-2 text-xs">
                                             <Checkbox checked={sameAsPresent} onCheckedChange={handleSameAsPresent} />
@@ -262,7 +324,9 @@ export default function EmployeeFormNavAdd(){
                                     </div>
                                     <div>
                                         <TextareaField name="permanent_address" label="Permanent Address" required={true} rows={5} disabled={sameAsPresent}
-                                            value={form.permanent_address} onChange={(e) => update('permanent_address', e.target.value)} />
+                                            value={form.permanent_address} onChange={(e) => update('permanent_address', e.target.value)} 
+                                            error={errors.permanent_address}
+                                        />
                                         
                                     </div>
                                 </div>
@@ -281,6 +345,7 @@ export default function EmployeeFormNavAdd(){
                                         loading={isLoadingDepartmentOptions}
                                         placeholder="Select Department"
                                         required
+                                        error={errors.department}
                                     />
                                     <SelectField
                                         label="Position"
@@ -291,6 +356,7 @@ export default function EmployeeFormNavAdd(){
                                         loading={isLoadingPositionOptions}
                                         placeholder="Select Position"
                                         required
+                                        error={errors.position}
                                     />
                                 </div>
                                 <div className="grid grid-cols-2 gap-x-4 gap-y-5">
@@ -302,6 +368,7 @@ export default function EmployeeFormNavAdd(){
                                         onChange={(v) => update('employment_type', v)}
                                         placeholder="Select Employment Type"
                                         required
+                                        error={errors.employment_type}
                                     />
                                     <SelectField
                                         label="Work Setup"
@@ -311,12 +378,15 @@ export default function EmployeeFormNavAdd(){
                                         onChange={(v) => update('work_setup', v)}
                                         placeholder="Select Work Setup"
                                         required
+                                        error={errors.work_setup}
                                     />
                                 </div>
                                 <div className="grid grid-cols-2  gap-x-4 gap-y-5">
                                     <DatePickerField label="Hire Date" name="hire_date" required
                                         value={form.hire_date ? parseISO(form.hire_date) : undefined}
-                                        onChange={(date) => update('hire_date', date ? format(date, 'yyyy-MM-dd') : '')} />
+                                        onChange={(date) => update('hire_date', date ? format(date, 'yyyy-MM-dd') : '')} 
+                                        error={errors.hire_date}
+                                    />
                                 </div>
                             </>
                         )}
@@ -376,7 +446,7 @@ export default function EmployeeFormNavAdd(){
                         ) : (
                             <span />
                         )}
-                        <Button size="lg" disabled={saveEmployee.isPending} onClick={() => isLast ? handleCreate() : setCurrent(current + 1)}>
+                        <Button size="lg" disabled={saveEmployee.isPending} onClick={() => isLast ? handleCreate() : handleNext()}>
                             { saveEmployee.isPending ? 'Saving...' : (isLast ? "Create employee" : "Next →")}
                         </Button>
                     </CardFooter>
