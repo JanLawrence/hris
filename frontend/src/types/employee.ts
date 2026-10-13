@@ -43,4 +43,5 @@ export type EmployeeFilters = {
     status?: string;
     employment_type?: string;
     department?: string;
+    search?: string;
 }

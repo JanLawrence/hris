@@ -1,6 +1,7 @@
 import InputField from '@/components/form/InputField'
 import MultiSelectField from '@/components/form/MultiSelectField'
 import { formatDate } from '@/utils/date';
+import { useDebounce } from '@/hooks/useDebounce';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Badge } from '@/components/ui/badge';
@@ -30,13 +31,16 @@ export default function EmployeesPage() {
   const [department, setDepartment] = useState<string[]>([]);
   const [employmentType, setEmploymentType] = useState<string[]>([]);
   const [status, setStatus] = useState("active")
+  const [search, setSearch] = useState("")
+  const debouncedSearch = useDebounce(search)
   
   const { data = [], isLoading, error } = useEmployees({ 
     status, 
     employment_type: employmentType.join(',') || undefined, 
-    department: department.join(',') || undefined
+    department: department.join(',') || undefined,
+    search: debouncedSearch || undefined
   });
-  
+
   const openEdit = (emp: Employee) => {
     return
   }
@@ -55,7 +59,7 @@ export default function EmployeesPage() {
       </header>
       <header className="border-b border-gray-200 flex items-center justify-between px-6 py-5 bg-[#fafaf8]">
         <div className="grid w-full max-w-4xl grid-cols-[3fr_1fr_1fr] gap-4">
-          <InputField name="Search" label="Search" />
+          <InputField name="Search" label="Search" onChange={(e) => setSearch(e.target.value)} />
           <MultiSelectField
             label="Department"
             name="deparment"
