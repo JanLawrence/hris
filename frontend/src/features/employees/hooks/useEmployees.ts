@@ -5,10 +5,10 @@ import type { Option } from '@/components/form/MultiSelect';
 
 export const EMPLOYEES_KEY = ['employees'];
 
-export function useEmployees() {
+export function useEmployees(params?: { status?: string }) {
   return useQuery({
-    queryKey: EMPLOYEES_KEY,
-    queryFn: () => getEmployees().then((res) => res.data),
+    queryKey: [...EMPLOYEES_KEY, params],
+    queryFn: () => getEmployees(params).then((res) => res.data),
   });
 }
 

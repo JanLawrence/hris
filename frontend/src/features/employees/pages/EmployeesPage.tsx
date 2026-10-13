@@ -24,13 +24,14 @@ import type { Employee } from '@/types/employee';
 export default function EmployeesPage() {
 
   const navigate = useNavigate();
-  const { data = [], isLoading, error } = useEmployees();
 
   const { options: departmentOptions, isLoading: isLoadingOptions } = useDepartmentOptions();
-
+  
   const [department, setDepartment] = useState<string[]>([]);
   const [employmentType, setEmploymentType] = useState<string[]>([]);
-
+  const [status, setStatus] = useState("active")
+  
+  const { data = [], isLoading, error } = useEmployees({ status });
   const openEdit = (emp: Employee) => {
     return
   }
@@ -70,9 +71,9 @@ export default function EmployeesPage() {
         </div>
         <div>
         <ButtonGroup>
-          <Button variant={"outline"} size={"lg"}>Active</Button>
-          <Button variant={"outline"} size={"lg"}>Inactive</Button>
-          <Button variant={"outline"} size={"lg"}>All</Button>
+          <Button variant={status === "active" ? "default" : "outline"} size={"lg"} onClick={() => setStatus("active")}>Active</Button>
+          <Button variant={status === "inactive" ? "default" : "outline"} size={"lg"} onClick={() => setStatus("inactive")}>Inactive</Button>
+          <Button variant={status === "all" ? "default" : "outline"} size={"lg"} onClick={() => setStatus("all")}>All</Button>
         </ButtonGroup>
         </div>
       </header>

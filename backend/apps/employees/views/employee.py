@@ -15,11 +15,11 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         params = self.request.query_params
 
         if self.action == 'list':
-            # ?status=active | separated | all  (para sa ButtonGroup mo)
+            # ?status=active | inactive | all  (para sa ButtonGroup mo)
             status = params.get("status", "active")
             if status == "active":
                 qs = qs.filter(is_active=True)
-            elif status == "separated":
+            elif status == "inactive":
                 qs = qs.filter(is_active=False)
 
             # ?department=1,3  (para sa MultiSelect mo)
