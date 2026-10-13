@@ -31,7 +31,12 @@ export default function EmployeesPage() {
   const [employmentType, setEmploymentType] = useState<string[]>([]);
   const [status, setStatus] = useState("active")
   
-  const { data = [], isLoading, error } = useEmployees({ status });
+  const { data = [], isLoading, error } = useEmployees({ 
+    status, 
+    employment_type: employmentType.join(',') || undefined, 
+    department: department.join(',') || undefined
+  });
+  
   const openEdit = (emp: Employee) => {
     return
   }

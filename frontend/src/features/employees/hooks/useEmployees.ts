@@ -2,10 +2,11 @@ import { useMemo } from 'react'
 import { useQuery } from '@tanstack/react-query';
 import { getEmployees } from '@/api/employees';
 import type { Option } from '@/components/form/MultiSelect';
+import type { EmployeeFilters } from '@/types/employee';
 
 export const EMPLOYEES_KEY = ['employees'];
 
-export function useEmployees(params?: { status?: string }) {
+export function useEmployees(params?: EmployeeFilters) {
   return useQuery({
     queryKey: [...EMPLOYEES_KEY, params],
     queryFn: () => getEmployees(params).then((res) => res.data),

@@ -38,3 +38,9 @@ export type EmployeePayload = {
     work_setup: string;
     hire_date: string;
 };
+
+export type EmployeeFilters = {
+    status?: string;
+    employment_type?: string;
+    department?: string;
+}
