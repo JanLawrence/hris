@@ -30,64 +30,13 @@ import { employmentTypeOptions, civilStatusOption, workSetupOption } from '../co
 import type { EmployeePayload } from "@/types/employee"
 import { useSaveEmployee } from "../hooks/useEmployeeMutations"
 
+import { INITIAL_FORM, type EmployeeForm, type FieldErrors, STEP_FIELDS, validateStep } from "../employeeForm";
+
 const STEPS = [
     { title: "Basic info", subtitle: "Name, birthdate, contact" },
     { title: "Job", subtitle: "Position, department, hired date" },
     { title: "Review", subtitle: "Check and create" },
 ]
-
-const INITIAL_FORM = {
-    first_name: "", 
-    middle_name: "", 
-    last_name: "", 
-    birth_date: "", 
-    civil_status: "single", 
-    email: "", 
-    mobile_no: "", 
-    present_address: "",
-    permanent_address: "",
-    department: "",
-    position: "",
-    employment_type: "probationary",
-    work_setup: "onsite",
-    hire_date: "",
-}
-
-const REQUIRED_FIELDS: (keyof EmployeeForm)[] = [
-    "first_name", "last_name", "birth_date", "civil_status", "email", "mobile_no", "present_address", "permanent_address",
-    "department", "position", "employment_type", "work_setup", "hire_date"
-]
-
-const STEP_FIELDS: (keyof EmployeeForm)[][] = [
-    ["first_name", "middle_name", "last_name", "birth_date", "civil_status", "email", "mobile_no", "present_address", "permanent_address"],
-    ["department", "position", "employment_type", "work_setup", "hire_date"],
-]
-
-type EmployeeForm = typeof INITIAL_FORM
-type FieldErrors = Partial<Record<keyof EmployeeForm, string>>
-
-function validateStep(step: number, form: EmployeeForm): FieldErrors {
-    const errors: FieldErrors = {}
-
-    for (const field of STEP_FIELDS[step]) {
-        const isFieldRequired = REQUIRED_FIELDS.includes(field);
-
-        if (isFieldRequired && !form[field].trim()) {
-            errors[field] = 'This field is required.';
-        }
-    }
-
-    if (step === 0) {
-        if (!errors.email && !/^\S+@\S+\.\S+$/.test(form.email)) {
-            errors.email = 'Enter a valid email address.'
-        }
-        if (!errors.mobile_no && !/^09\d{9}$/.test(form.mobile_no)){
-            errors.mobile_no = 'Enter a valid mobile number. e.g. 09177461299'
-        }
-    }
-
-    return errors
-}
 
 const labelOf = (options: Option[], value: string) =>
     options.find((o) => o.value === value)?.label ?? ""
