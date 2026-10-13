@@ -8,6 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import ActionButton from '@/components/table/ActionButton';
 import { employmentTypeOptions } from '../constants';
 import { CirclePlus, Trash2Icon } from 'lucide-react';
+import { cn } from 'cn';
 import {
   Table,
   TableBody,
@@ -34,7 +35,7 @@ export default function EmployeesPage() {
   const [search, setSearch] = useState("")
   const debouncedSearch = useDebounce(search)
   
-  const { data = [], isLoading, error } = useEmployees({ 
+  const { data = [], isLoading, error, isFetching } = useEmployees({ 
     status, 
     employment_type: employmentType.join(',') || undefined, 
     department: department.join(',') || undefined,
@@ -86,7 +87,12 @@ export default function EmployeesPage() {
         </ButtonGroup>
         </div>
       </header>
-      <div className="mx-5 my-5 overflow-hidden rounded-sm border border-gray-200 bg-white">
+      <div
+        className={cn(
+          "mx-5 my-5 overflow-hidden rounded-sm border border-gray-200 bg-white transition-opacity",
+          isFetching && !isLoading && "opacity-60",
+        )}
+      >
 
         {isLoading && <p className="p-4 text-sm text-muted-foreground">Loading...</p>}
         {error && <p className="p-4 text-sm text-destructive">Failed to load employees.</p>}
