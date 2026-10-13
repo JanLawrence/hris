@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { MoveLeft, Check, Info } from "lucide-react"
 import { cn } from "cn"
 import { format, parseISO } from "date-fns"
+import { formatDate } from '@/utils/date';
 import InputField from "@/components/form/InputField"
 import DatePickerField from "@/components/form/DatePickerField"
 import SelectField from "@/components/form/SelectField"
@@ -90,10 +91,6 @@ function validateStep(step: number, form: EmployeeForm): FieldErrors {
 
 const labelOf = (options: Option[], value: string) =>
     options.find((o) => o.value === value)?.label ?? ""
-
-const formatDate = (value: string) =>
-    value ? format(parseISO(value), "MMM d, yyyy") : ""
-
 
 function ReviewSection({ title, onEdit, children }: { title: string; onEdit: () => void; children: ReactNode }) {
     return (

@@ -1,5 +1,6 @@
 import InputField from '@/components/form/InputField'
 import MultiSelectField from '@/components/form/MultiSelectField'
+import { formatDate } from '@/utils/date';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Badge } from '@/components/ui/badge';
@@ -27,7 +28,6 @@ export default function EmployeesPage() {
 
   const { options: departmentOptions, isLoading: isLoadingOptions } = useDepartmentOptions();
 
-  
   const [department, setDepartment] = useState<string[]>([]);
   const [employmentType, setEmploymentType] = useState<string[]>([]);
 
@@ -71,7 +71,7 @@ export default function EmployeesPage() {
         <div>
         <ButtonGroup>
           <Button variant={"outline"} size={"lg"}>Active</Button>
-          <Button variant={"outline"} size={"lg"}>Separated</Button>
+          <Button variant={"outline"} size={"lg"}>Inactive</Button>
           <Button variant={"outline"} size={"lg"}>All</Button>
         </ButtonGroup>
         </div>
@@ -104,10 +104,10 @@ export default function EmployeesPage() {
                 <TableRow key={emp.id}>
                   <TableCell>{emp.employee_no}</TableCell>
                   <TableCell>{emp.full_name}</TableCell>
-                  <TableCell>{emp.position_title}</TableCell>
-                  <TableCell>{emp.department_name}</TableCell>
+                  <TableCell>{emp.position_title || '—'}</TableCell>
+                  <TableCell>{emp.department_name || '—'}</TableCell>
                   <TableCell>{emp.employment_type_display}</TableCell>
-                  <TableCell>{emp.hire_date}</TableCell>
+                  <TableCell>{formatDate(emp.hire_date)}</TableCell>
                   <TableCell>
                     <Badge variant={emp.is_active ? 'default' : 'secondary'}>
                       {emp.is_active ? 'Active' : 'Inactive'}

@@ -35,7 +35,8 @@ class EmployeeSerializer(serializers.ModelSerializer):
         return f"{m.first_name} {m.last_name}" if m else None
 
     def get_full_name(self, obj):
-        return f"{obj.first_name} {obj.middle_name} {obj.last_name}" if obj else None
+        parts = [obj.first_name, obj.middle_name, obj.last_name]
+        return " ".join(p for p in parts if p)
 
     def validate_reports_to(self, manager):
         # Hindi tinatawag ng DRF ang model.clean(), kaya ulitin dito
