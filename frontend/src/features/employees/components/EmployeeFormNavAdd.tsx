@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react"
+import { useState } from "react"
 import { useNavigate } from "react-router-dom"
 import type { AxiosError } from 'axios';
 import { Button } from "@/components/ui/button"
@@ -10,27 +10,18 @@ import {
     CardTitle,
 } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
-import { MoveLeft, Check, Info } from "lucide-react"
+import { MoveLeft, Check } from "lucide-react"
 import { cn } from "cn"
-import { format, parseISO } from "date-fns"
-import { formatDate } from '@/utils/date';
-import InputField from "@/components/form/InputField"
-import DatePickerField from "@/components/form/DatePickerField"
-import SelectField from "@/components/form/SelectField"
-import TextareaField from "@/components/form/TextareaField"
-import { Checkbox } from "@/components/ui/checkbox"
-import { Avatar, AvatarFallback } from "@/components/ui/avatar"
-import type { Option } from "@/components/form/MultiSelect"
 import { toast } from '@/components/ui/toast';
 
-import { useDepartmentOptions } from '@/features/settings/hooks/useDepartments';
-import { usePositionOptions } from '@/features/settings/hooks/usePositions';
-
-import { employmentTypeOptions, civilStatusOption, workSetupOption } from '../constants';
 import type { EmployeePayload } from "@/types/employee"
 import { useSaveEmployee } from "../hooks/useEmployeeMutations"
 
 import { INITIAL_FORM, type EmployeeForm, type FieldErrors, STEP_FIELDS, validateStep } from "../employeeForm";
+
+import BasicInfoStep from "./steps/BasicInfoStep";
+import JobStep from "./steps/JobStep";
+import ReviewStep from "./steps/ReviewStep";
 
 const STEPS = [
     { title: "Basic info", subtitle: "Name, birthdate, contact" },
@@ -38,51 +29,17 @@ const STEPS = [
     { title: "Review", subtitle: "Check and create" },
 ]
 
-const labelOf = (options: Option[], value: string) =>
-    options.find((o) => o.value === value)?.label ?? ""
-
-function ReviewSection({ title, onEdit, children }: { title: string; onEdit: () => void; children: ReactNode }) {
-    return (
-        <section className="rounded-lg border p-4">
-            <div className="mb-3 flex items-center justify-between">
-                <h3 className="text-sm font-semibold">{title}</h3>
-                <Button variant="link" size="sm" className="h-auto p-0" onClick={onEdit}>Edit</Button>
-            </div>
-            <dl className="grid grid-cols-[160px_1fr] gap-x-4 gap-y-2 text-sm">
-                {children}
-            </dl>
-        </section>
-    )
-}
-
-function ReviewRow({ label, value }: { label: string; value: string }) {
-    return (
-        <>
-            <dt className="text-muted-foreground">{label}</dt>
-            <dd className="font-medium whitespace-pre-line">{value || "—"}</dd>
-        </>
-    )
-}
-
 
 export default function EmployeeFormNavAdd(){
     const navigate = useNavigate();
     const [current, setCurrent] = useState(0)
     const saveEmployee = useSaveEmployee()
 
-    const { options: departmentOptions, isLoading: isLoadingDepartmentOptions } = useDepartmentOptions();
-    const { options: positionOptions, isLoading: isLoadingPositionOptions } = usePositionOptions();
-
     const [form, setForm] = useState(INITIAL_FORM)
     const [errors, setErrors] = useState<FieldErrors>({})
 
 
     const [sameAsPresent, setSameAsPresent] = useState(false)
-
-    const fullName = [form.first_name, form.middle_name, form.last_name].filter(Boolean).join(" ")
-    const initials = ((form.first_name[0] ?? "") + (form.last_name[0] ?? "")).toUpperCase()
-    const departmentLabel = labelOf(departmentOptions, form.department)
-    const positionLabel = labelOf(positionOptions, form.position)
 
     const isLast = current === STEPS.length - 1
 
@@ -222,167 +179,25 @@ export default function EmployeeFormNavAdd(){
                     <CardContent className="flex flex-1 flex-col gap-y-5">
                         {/* <pre>{JSON.stringify(form, null, 2)}</pre> */}
                         { current === 0 && (
-                            <div className="flex flex-col gap-y-5">
-                                <div className="grid grid-cols-3 gap-x-4 gap-y-5">
-                                    <InputField name="first_name" label="First Name" autoFocus required={true} error={errors.first_name}
-                                        value={form.first_name} onChange={(e) => update('first_name', e.target.value)} />
-                                    <InputField name="middle_name" label="Middle Name" error={errors.middle_name}
-                                        value={form.middle_name} onChange={(e) => update('middle_name', e.target.value)} />
-                                    <InputField name="last_name" label="Last Name" required={true} error={errors.last_name}
-                                        value={form.last_name} onChange={(e) => update('last_name', e.target.value)} />
-                                </div>
-                                <div className="grid grid-cols-2 gap-x-4 gap-y-5">
-                                    <DatePickerField label="Birth Date" name="birth_date" required
-                                        value={form.birth_date ? parseISO(form.birth_date) : undefined} error={errors.birth_date}
-                                        onChange={(date) => update('birth_date', date ? format(date, 'yyyy-MM-dd') : '')}
-                                        maxDate={new Date()} />
-                                    <SelectField
-                                        label="Civil Status" 
-                                        name="civil_status"
-                                        options={civilStatusOption}
-                                        value={form.civil_status}
-                                        onChange={(v) => update('civil_status', v)}
-                                        placeholder="Select Civil Status"
-                                        error={errors.civil_status}
-                                    />
-                                </div>
-                                <div className="grid grid-cols-2 gap-x-4 gap-y-5">
-                                    <InputField name="email" label="Email" required={true} type="email" error={errors.email}
-                                        value={form.email} onChange={(e) => update('email', e.target.value)} />
-                                    <InputField name="mobile_no" label="Mobile No." required={true} error={errors.mobile_no}
-                                        value={form.mobile_no} onChange={(e) => update('mobile_no', e.target.value)} />
-                                </div>
-                                <div className="grid grid-cols-2  gap-x-4 gap-y-5">
-                                    <div>
-                                        <TextareaField name="present_address" label="Present Address" required={true} rows={5}
-                                            value={form.present_address} onChange={(e) => {
-                                                update('present_address', e.target.value)
-                                                if(sameAsPresent){
-                                                    update('permanent_address', e.target.value)
-                                                }
-                                            }} 
-                                            error={errors.present_address}
-                                        />
-                                        <label className="mt-2 flex items-center gap-2 text-xs">
-                                            <Checkbox checked={sameAsPresent} onCheckedChange={handleSameAsPresent} />
-                                            Same as present address
-                                        </label>
-                                    </div>
-                                    <div>
-                                        <TextareaField name="permanent_address" label="Permanent Address" required={true} rows={5} disabled={sameAsPresent}
-                                            value={form.permanent_address} onChange={(e) => update('permanent_address', e.target.value)} 
-                                            error={errors.permanent_address}
-                                        />
-                                        
-                                    </div>
-                                </div>
-                            </div>
+                            <BasicInfoStep
+                                form={form}
+                                errors={errors}
+                                update={update}
+                                sameAsPresent={sameAsPresent}
+                                onSameAsPresentChange={handleSameAsPresent}
+                            />
                         )}
 
                         {current === 1 && (
-                            <>
-                                <div className="grid grid-cols-2 gap-x-4 gap-y-5">
-                                    <SelectField
-                                        label="Department"
-                                        name="department"
-                                        options={departmentOptions}
-                                        value={form.department}
-                                        onChange={(v) => update('department', v)}
-                                        loading={isLoadingDepartmentOptions}
-                                        placeholder="Select Department"
-                                        required
-                                        error={errors.department}
-                                    />
-                                    <SelectField
-                                        label="Position"
-                                        name="position"
-                                        options={positionOptions}
-                                        value={form.position}
-                                        onChange={(v) => update('position', v)}
-                                        loading={isLoadingPositionOptions}
-                                        placeholder="Select Position"
-                                        required
-                                        error={errors.position}
-                                    />
-                                </div>
-                                <div className="grid grid-cols-2 gap-x-4 gap-y-5">
-                                    <SelectField
-                                        label="Employment Type"
-                                        name="employment_type"
-                                        options={employmentTypeOptions}
-                                        value={form.employment_type}
-                                        onChange={(v) => update('employment_type', v)}
-                                        placeholder="Select Employment Type"
-                                        required
-                                        error={errors.employment_type}
-                                    />
-                                    <SelectField
-                                        label="Work Setup"
-                                        name="work_setup"
-                                        options={workSetupOption}
-                                        value={form.work_setup}
-                                        onChange={(v) => update('work_setup', v)}
-                                        placeholder="Select Work Setup"
-                                        required
-                                        error={errors.work_setup}
-                                    />
-                                </div>
-                                <div className="grid grid-cols-2  gap-x-4 gap-y-5">
-                                    <DatePickerField label="Hire Date" name="hire_date" required
-                                        value={form.hire_date ? parseISO(form.hire_date) : undefined}
-                                        onChange={(date) => update('hire_date', date ? format(date, 'yyyy-MM-dd') : '')} 
-                                        error={errors.hire_date}
-                                    />
-                                </div>
-                            </>
+                            <JobStep
+                                form={form}
+                                errors={errors}
+                                update={update}
+                            />
                         )}
 
                         {current === 2 && (
-                            <div className="flex flex-col gap-4">
-                                {/* Summary */}
-                                <div className="flex items-center gap-4">
-                                    <Avatar className="size-14">
-                                        <AvatarFallback className="text-lg font-semibold">{initials || "?"}</AvatarFallback>
-                                    </Avatar>
-                                    <div className="flex flex-col gap-1 gap-y-0">
-                                        <span className="text-lg font-semibold leading-tight">{fullName || "—"}</span>
-                                        <span className="text-sm text-muted-foreground">
-                                            {[positionLabel, departmentLabel].filter(Boolean).join(" · ") || "No position or department yet"}
-                                        </span>
-                                        <div className="flex items-center gap-2 text-sm">
-                                            <Badge variant="secondary">{labelOf(employmentTypeOptions, form.employment_type)}</Badge>
-                                            {form.hire_date && (
-                                                <span className="text-muted-foreground">Starts {formatDate(form.hire_date)}</span>
-                                            )}
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <ReviewSection title="Basic info" onEdit={() => setCurrent(0)}>
-                                    <ReviewRow label="Birth date" value={formatDate(form.birth_date)} />
-                                    <ReviewRow label="Civil status" value={labelOf(civilStatusOption, form.civil_status)} />
-                                    <ReviewRow label="Email" value={form.email} />
-                                    <ReviewRow label="Mobile no." value={form.mobile_no} />
-                                    <ReviewRow label="Present address" value={form.present_address} />
-                                    <ReviewRow
-                                        label="Permanent address"
-                                        value={sameAsPresent ? "Same as present address" : form.permanent_address}
-                                    />
-                                </ReviewSection>
-
-                                <ReviewSection title="Job" onEdit={() => setCurrent(1)}>
-                                    <ReviewRow label="Department" value={departmentLabel} />
-                                    <ReviewRow label="Position" value={positionLabel} />
-                                    <ReviewRow label="Employment type" value={labelOf(employmentTypeOptions, form.employment_type)} />
-                                    <ReviewRow label="Work setup" value={labelOf(workSetupOption, form.work_setup)} />
-                                    <ReviewRow label="Hire date" value={formatDate(form.hire_date)} />
-                                </ReviewSection>
-
-                                <p className="flex items-start gap-2 rounded-md bg-muted p-3 text-sm text-muted-foreground">
-                                    <Info className="mt-0.5 size-4 shrink-0" />
-                                    Employee ID is assigned automatically after you create the record.
-                                </p>
-                            </div>
+                            <ReviewStep form={form} sameAsPresent={sameAsPresent} onEditStep={setCurrent} />
                         )}
                     </CardContent>
 
