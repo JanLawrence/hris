@@ -5,10 +5,13 @@ import { employeesRoutes } from '@/features/employees/routes';
 import { settingsRoutes } from '@/features/settings/routes';
 import { authRoutes } from '@/features/auth/routes';
 import ProtectedRoute from '@/features/auth/components/ProtectedRoute';
+import GuestRoute from '@/features/auth/components/GuestRoute';
 
 export const router = createBrowserRouter([
-  ...authRoutes,
-
+  {
+    element: <GuestRoute />,
+    children: [...authRoutes],
+  },
   {
     element: <ProtectedRoute />,
     children: [
