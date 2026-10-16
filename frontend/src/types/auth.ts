@@ -1,10 +1,12 @@
+import type { Role } from '@/config/navigation';
+
 export interface AuthUser {
     id: number;
     username: string;
     email: string;
     first_name: string;
     last_name: string;
-    role: string;
+    role: Role;
 }
 
 export type AuthPayload = {
