@@ -1,7 +1,8 @@
-import { createContext, useContext, useState, type ReactNode } from "react"
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react"
 import { useQuery, useQueryClient } from "@tanstack/react-query"
 import { getMe, login as loginRequest } from "@/api/auth"
 import type { AuthUser } from "@/types/auth"
+import { SESSION_EXPIRED_EVENT } from "@/api/client"
 
 type AuthContextValue = {
     user: AuthUser | null
@@ -22,6 +23,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         queryFn: () => getMe().then((res) => res.data),
         enabled: hasToken,
     })
+
+    // Fired by api/client.ts when the refresh token is no longer valid.
+    useEffect(() => {
+        const onSessionExpired = () => {
+            queryClient.clear()
+            setHasToken(false)
+        }
+        window.addEventListener(SESSION_EXPIRED_EVENT, onSessionExpired)
+        return () => window.removeEventListener(SESSION_EXPIRED_EVENT, onSessionExpired)
+    }, [queryClient])
 
     const login = async (username: string, password: string) => {
         const res = await loginRequest({username, password});
