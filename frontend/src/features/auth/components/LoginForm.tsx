@@ -1,7 +1,7 @@
 import { useState, type SubmitEvent } from "react"
 import { cn } from "cn"
 import { Button } from "@/components/ui/button"
-import { useNavigate } from "react-router-dom"
+import { useLocation, useNavigate } from "react-router-dom"
 import {
   Card,
   CardContent,
@@ -42,6 +42,8 @@ export function LoginForm({
 
     const auth = useAuth()  
     const navigate = useNavigate();
+    const location = useLocation()
+    const from = (location.state as { from?: string } | null)?.from ?? "/dashboard"
 
     const [username, setUsername] = useState("");
     const [password, setPassword] = useState("");
@@ -59,7 +61,7 @@ export function LoginForm({
         try {
             await auth.login(username, password);
             toast.update(toastId, { type: 'success', title: 'Logged in' })
-            navigate('/dashboard')
+            navigate(from, { replace: true })
         } catch {
             toast.update(toastId, { type: 'error', title: 'Invalid credentials, please try again.' })
         }
