@@ -3,12 +3,11 @@ import MainLayout from '@/layouts/MainLayout';
 import { dashboardRoutes } from '@/features/dashboard/routes';
 import { employeesRoutes } from '@/features/employees/routes';
 import { settingsRoutes } from '@/features/settings/routes';
+import { authRoutes } from '@/features/auth/routes';
 
 export const router = createBrowserRouter([
-  // Walang layout
-  // ...authRoutes,
+  ...authRoutes,
 
-  // May layout (Header, Sidebar, Footer)
   {
     element: <MainLayout />,
     children: [
