@@ -92,7 +92,7 @@ export default function EmployeeFormNav(){
                 </TabsList>
             </header>
 
-            {employee && <EmployeeEditForm employee={employee} />}
+            {employee && <EmployeeEditForm employee={employee} onErrorStep={(i) => setStep(STEPS[i])} />}
             
         </Tabs>
     )
