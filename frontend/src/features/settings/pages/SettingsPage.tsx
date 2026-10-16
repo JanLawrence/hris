@@ -1,6 +1,4 @@
 import { Outlet } from 'react-router-dom';
-import { SaveCheck } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 import SettingsSidebar from '../components/SettingsSidebar';
 
 export default function SettingsPage() {

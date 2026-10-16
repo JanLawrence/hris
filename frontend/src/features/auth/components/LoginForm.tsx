@@ -15,8 +15,8 @@ import {
   FieldGroup,
 } from "@/components/ui/field"
 import InputField from "@/components/form/InputField"
-import { login } from "@/api/auth"
 import { toast } from '@/components/ui/toast';
+import { useAuth } from "../AuthContext"
 
 type FieldErrors = { username?: string; password?: string };
 
@@ -39,6 +39,8 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+
+    const auth = useAuth()  
     const navigate = useNavigate();
 
     const [username, setUsername] = useState("");
@@ -55,9 +57,7 @@ export function LoginForm({
         const toastId = toast.add({ type: 'loading', title: 'Logging in...'});
         
         try {
-            const res = await login({username, password});
-            localStorage.setItem('access_token', res.data.access)
-            localStorage.setItem('refresh_token', res.data.refresh)
+            await auth.login(username, password);
             toast.update(toastId, { type: 'success', title: 'Logged in' })
             navigate('/dashboard')
         } catch {
