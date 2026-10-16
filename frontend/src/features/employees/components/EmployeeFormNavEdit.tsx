@@ -1,27 +1,22 @@
 import { useState } from "react"
-import { useNavigate } from "react-router-dom"
+import { useNavigate, useParams } from "react-router-dom"
 import { Button } from "@/components/ui/button"
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@/components/ui/card"
-import {
     Avatar,
-    AvatarImage,
     AvatarFallback
 } from "@/components/ui/avatar"
+import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import {
     Tabs,
-    TabsContent,
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
 import { MoveLeft } from "lucide-react"
+import { cn } from "cn"
+import { getInitials } from "@/utils/text"
+import { useEmployee } from "../hooks/useEmployees"
+import EmployeeEditForm from "./EmployeeEditForm"
 
 const STEPS = ["personal", "employment"] as const
 type Step = (typeof STEPS)[number]
@@ -32,34 +27,62 @@ const triggerClass =
 
 export default function EmployeeFormNav(){
     const navigate = useNavigate();
-    const [step, setStep] = useState<Step>("personal")
-    const index = STEPS.indexOf(step)
+    const { id } = useParams()
+    const { data: employee, isLoading } = useEmployee(Number(id))
 
-    const goPrev = () => setStep(STEPS[Math.max(index - 1, 0)])
-    const goNext = () => setStep(STEPS[Math.min(index + 1, STEPS.length - 1)])
+    const [step, setStep] = useState<Step>("personal")
+
 
     return (
         <Tabs value={step} onValueChange={(value) => setStep(value as Step)}>
             <header className="border-b border-gray-200 flex flex-col gap-3 px-10 pt-6 bg-[#ffffff]">
                 <Button variant={'default'} size={'sm'} className={'self-start mb-4 gap-1'} onClick={() => navigate('/employees')}><MoveLeft />Back</Button>
-                <div className="flex justify-between"> 
-                    <div className="flex items-center gap-3 mb-6">
-                        <Avatar className="size-14">
-                            <AvatarFallback>JT</AvatarFallback>
-                        </Avatar>
-                        <div className="flex flex-col gap-0">
-                            <div className="flex items-center gap-2">
-                                <span className="text-2xl font-medium">Jan Tolentino</span>
-                                <Badge className="bg-green-100 text-green-700"> 
-                                    <span className="size-1.5 rounded-full bg-green-600" />
-                                    Active · Regular
-                                </Badge>
+                <div className="flex justify-between">
+                    {isLoading ? (
+                        <div className="flex items-center gap-3 mb-6">
+                            <Skeleton className="size-14 rounded-full" />
+                            <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-2">
+                                    <Skeleton className="h-8 w-48" />
+                                    <Skeleton className="h-5 w-24 rounded-full" />
+                                </div>
+                                <Skeleton className="h-4 w-32" />
                             </div>
-                            <span className="text-sm text-muted-foreground">Full Stack Engineer</span>
                         </div>
-                    </div>
+                    ) : employee ? (
+                        <div className="flex items-center gap-3 mb-6">
+                            <Avatar className="size-14">
+                                <AvatarFallback>{getInitials(employee.full_name)}</AvatarFallback>
+                            </Avatar>
+                            <div className="flex flex-col gap-1">
+                                <div className="flex items-center gap-2">
+                                    <span className="text-2xl font-medium">{employee.full_name}</span>
+                                    <Badge
+                                        className={cn(
+                                            employee.is_active
+                                                ? "bg-green-100 text-green-700"
+                                                : "bg-muted text-muted-foreground",
+                                        )}
+                                    >
+                                        <span
+                                            className={cn(
+                                                "size-1.5 rounded-full",
+                                                employee.is_active ? "bg-green-600" : "bg-muted-foreground",
+                                            )}
+                                        />
+                                        {employee.is_active ? "Active" : "Inactive"} · {employee.employment_type_display}
+                                    </Badge>
+                                </div>
+                                <span className="text-sm text-muted-foreground">
+                                    {employee.position_title ?? "No position"}
+                                </span>
+                            </div>
+                        </div>
+                    ) : (
+                        <p className="mb-6 text-sm text-destructive">Employee not found.</p>
+                    )}
                     <div className="flex items-center gap-3 mb-7">
-                        <Button variant={'default'} size={'lg'} className={'gap-1'}>Save Changes</Button>
+                        <Button type="submit" form="employee-edit-form" variant={'default'} size={'lg'} className={'gap-1'}>Save Changes</Button>
 
                     </div>
                 </div>
@@ -69,36 +92,8 @@ export default function EmployeeFormNav(){
                 </TabsList>
             </header>
 
-            <TabsContent value="personal">
-                <Card className="mx-6 my-5">
-                    <CardHeader>
-                        <CardTitle>Personal</CardTitle>
-                        <CardDescription>Basic personal information.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="text-sm text-muted-foreground">
-                        {/* personal fields go here */}
-                    </CardContent>
-                    <CardFooter className="justify-end gap-2">
-                        <Button onClick={goNext}>Next</Button>
-                    </CardFooter>
-                </Card>
-            </TabsContent>
-
-            <TabsContent value="employment">
-                <Card className="mx-6 my-5">
-                    <CardHeader>
-                        <CardTitle>Employment</CardTitle>
-                        <CardDescription>Position, department and employment details.</CardDescription>
-                    </CardHeader>
-                    <CardContent className="text-sm text-muted-foreground">
-                        {/* employment fields go here */}
-                    </CardContent>
-                    <CardFooter className="justify-between gap-2">
-                        <Button variant="outline" onClick={goPrev}>Previous</Button>
-                        <Button type="submit">Save</Button>
-                    </CardFooter>
-                </Card>
-            </TabsContent>
+            {employee && <EmployeeEditForm employee={employee} />}
+            
         </Tabs>
     )
 }

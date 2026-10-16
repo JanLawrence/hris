@@ -4,6 +4,7 @@ import type { Employee, EmployeePayload, EmployeeFilters } from '@/types/employe
 const BASE = '/api/employees/';
 
 export const getEmployees = (params?: EmployeeFilters) => client.get<Employee[]>(BASE, { params });
+export const getEmployee = (id: number) => client.get<Employee>(`${BASE}${id}/`);
 export const createEmployee = (data: EmployeePayload) => client.post<Employee>(BASE, data);
 export const updateEmployee = (id: number, data: EmployeePayload) => client.patch<Employee>(`${BASE}${id}/`, data);
 export const deleteEmployee = (id: number) => client.delete(`${BASE}${id}/`);

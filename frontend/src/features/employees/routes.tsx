@@ -6,5 +6,5 @@ import EmployeeFormNavEdit from './components/EmployeeFormNavEdit';
 export const employeesRoutes: RouteObject[] = [
   { path: 'employees', element: <EmployeesPage /> },
   { path: 'employees/form/add', element: <EmployeeFormNavAdd /> },
-  { path: 'employees/form/edit', element: <EmployeeFormNavEdit /> },
+  { path: 'employees/:id/edit', element: <EmployeeFormNavEdit /> },
 ];

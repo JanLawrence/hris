@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { getEmployees } from '@/api/employees';
+import { getEmployees, getEmployee } from '@/api/employees';
 import type { Option } from '@/components/form/MultiSelect';
 import type { EmployeeFilters } from '@/types/employee';
 
@@ -11,6 +11,13 @@ export function useEmployees(params?: EmployeeFilters) {
     queryKey: [...EMPLOYEES_KEY, params],
     queryFn: () => getEmployees(params).then((res) => res.data),
     placeholderData: keepPreviousData,
+  });
+}
+
+export function useEmployee(id: number) {
+  return useQuery({
+    queryKey: [...EMPLOYEES_KEY, id],
+    queryFn: () => getEmployee(id).then((res) => res.data),
   });
 }
 

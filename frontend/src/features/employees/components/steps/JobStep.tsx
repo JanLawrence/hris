@@ -23,7 +23,7 @@ export default function JobStep({ form, errors, update }: Props) {
     const { options: positionOptions, isLoading: isLoadingPositionOptions } = usePositionOptions();
 
     return (
-        <>
+        <div className="flex flex-col gap-y-5">
             <div className="grid grid-cols-2 gap-x-4 gap-y-5">
                 <SelectField
                     label="Department"
@@ -77,6 +77,6 @@ export default function JobStep({ form, errors, update }: Props) {
                     error={errors.hire_date}
                 />
             </div>
-        </>
+        </div>
     )
 }

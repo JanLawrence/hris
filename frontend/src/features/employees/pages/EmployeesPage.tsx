@@ -43,7 +43,7 @@ export default function EmployeesPage() {
   });
 
   const openEdit = (emp: Employee) => {
-    return
+    navigate(`/employees/${emp.id}/edit`)
   }
   const handleDelete = async (emp: Employee) => {
     return

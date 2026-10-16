@@ -14,10 +14,9 @@ import { MoveLeft, Check } from "lucide-react"
 import { cn } from "cn"
 import { toast } from '@/components/ui/toast';
 
-import type { EmployeePayload } from "@/types/employee"
 import { useSaveEmployee } from "../hooks/useEmployeeMutations"
 
-import { INITIAL_FORM, type EmployeeForm, type FieldErrors, STEP_FIELDS, validateStep } from "../employeeForm";
+import { formToPayload, INITIAL_FORM, type EmployeeForm, type FieldErrors, STEP_FIELDS, validateStep } from "../employeeForm";
 
 import BasicInfoStep from "./steps/BasicInfoStep";
 import JobStep from "./steps/JobStep";
@@ -67,11 +66,7 @@ export default function EmployeeFormNavAdd(){
     }
 
     const handleCreate = () => {
-        const payload: EmployeePayload = {
-            ...form,
-            department: form.department ? Number(form.department) : null,
-            position: form.position ? Number(form.position) : null,
-        }
+        const payload = formToPayload(form);
 
         setErrors({})
 
