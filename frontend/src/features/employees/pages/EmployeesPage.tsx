@@ -1,11 +1,14 @@
 import InputField from '@/components/form/InputField'
 import MultiSelectField from '@/components/form/MultiSelectField'
+import type { AxiosError } from 'axios';
 import { formatDate } from '@/utils/date';
 import { useDebounce } from '@/hooks/useDebounce';
 import { Button } from '@/components/ui/button';
 import { ButtonGroup } from "@/components/ui/button-group"
 import { Badge } from '@/components/ui/badge';
+import { confirm } from '@/components/form/FormAlertDialog';
 import ActionButton from '@/components/table/ActionButton';
+import { toast } from '@/components/ui/toast';
 import { employmentTypeOptions } from '../constants';
 import { CirclePlus, Trash2Icon } from 'lucide-react';
 import { cn } from 'cn';
@@ -22,9 +25,10 @@ import { useState } from 'react';
 import { useDepartmentOptions } from '@/features/settings/hooks/useDepartments';
 import { useEmployees } from '../hooks/useEmployees';
 import type { Employee } from '@/types/employee';
+import { useDeleteEmployee } from '../hooks/useEmployeeMutations';
 
 export default function EmployeesPage() {
-
+  const deleteEmployee = useDeleteEmployee();
   const navigate = useNavigate();
 
   const { options: departmentOptions, isLoading: isLoadingOptions } = useDepartmentOptions();
@@ -45,9 +49,31 @@ export default function EmployeesPage() {
   const openEdit = (emp: Employee) => {
     navigate(`/employees/${emp.id}/edit`)
   }
+
   const handleDelete = async (emp: Employee) => {
-    return
-  }
+    const ok = await confirm({
+      title: 'Delete department?',
+      description: `${emp.full_name} will be marked as inactive. Their records are kept and can be viewed under the Inactive filter.`,
+      icon: Trash2Icon,
+      confirm_text: 'Delete',
+    });
+    if (!ok) return;
+
+    const toastId = toast.add({ type: 'loading', title: 'Deleting employee...' });
+
+    deleteEmployee.mutate(emp.id, {
+      onSuccess: () => {
+        toast.update(toastId, { type: 'success', title: 'Employee deleted.' });
+      },
+      onError: (err) => {
+        const detail = (err as AxiosError<{ detail?: string }>).response?.data?.detail;
+        toast.update(toastId, {
+          type: 'error',
+          title: detail ?? 'Failed to delete employee.',
+        });
+      },
+    });
+  };
 
  
   return (
