@@ -28,6 +28,7 @@ export const navGroups: NavGroup[] = [
     },
     {
         title: 'Maintenance',
+        roles: ['admin', 'hr'],
         links: [
             {
                 to: '/employees',

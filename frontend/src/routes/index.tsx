@@ -6,6 +6,7 @@ import { settingsRoutes } from '@/features/settings/routes';
 import { authRoutes } from '@/features/auth/routes';
 import ProtectedRoute from '@/features/auth/components/ProtectedRoute';
 import GuestRoute from '@/features/auth/components/GuestRoute';
+import RoleRoute from '@/features/auth/components/RoleRoute';
 
 export const router = createBrowserRouter([
   {
@@ -19,8 +20,10 @@ export const router = createBrowserRouter([
         element: <MainLayout />,
         children: [
           ...dashboardRoutes,
-          ...employeesRoutes,
-          ...settingsRoutes,
+          {
+            element: <RoleRoute roles={['admin', 'hr']} />,
+            children: [...employeesRoutes, ...settingsRoutes],
+          },
         ],
       }
     ]
