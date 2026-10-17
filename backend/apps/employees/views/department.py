@@ -1,3 +1,4 @@
+from apps.users.permissions import IsHROrAdmin
 from django.db.models import Count, ProtectedError
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
@@ -7,6 +8,7 @@ from ..serializers import DepartmentSerializer
 import time
 
 class DepartmentViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsHROrAdmin]
     serializer_class = DepartmentSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["name", "code"]

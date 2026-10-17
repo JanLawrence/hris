@@ -1,12 +1,13 @@
+from apps.users.permissions import IsHROrAdmin
 from django.db.models import Count, ProtectedError
 from rest_framework import filters, status, viewsets
 from rest_framework.response import Response
 from ..models import Position
 from ..serializers import PositionSerializer
-
 import time
 
 class PositionViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsHROrAdmin]
     serializer_class = PositionSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["title"]

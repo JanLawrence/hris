@@ -1,3 +1,4 @@
+from apps.users.permissions import IsHROrAdmin
 from rest_framework import filters, viewsets
 
 from ..models import Employee
@@ -5,6 +6,7 @@ from ..serializers import EmployeeSerializer
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
+    permission_classes = [IsHROrAdmin]
     serializer_class = EmployeeSerializer
     filter_backends = [filters.SearchFilter, filters.OrderingFilter]
     search_fields = ["employee_no", "first_name", "last_name", "email"]
