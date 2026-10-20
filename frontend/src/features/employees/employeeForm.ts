@@ -15,6 +15,15 @@ export const INITIAL_FORM = {
     employment_type: "probationary",
     work_setup: "onsite",
     hire_date: "",
+    sss_no: "",
+    philhealth_no: "",
+    pagibig_no: "",
+    tin: "",
+    emergency_contact_name: "",
+    emergency_contact_relationship: "",
+    emergency_contact_mobile: "",
+    regular_date: "",
+    reports_to: ""
 }
 
 export const REQUIRED_FIELDS: (keyof EmployeeForm)[] = [
@@ -69,6 +78,15 @@ export function employeeToForm(employee: Employee): EmployeeForm {
         employment_type: employee.employment_type,
         work_setup: employee.work_setup,
         hire_date: employee.hire_date,
+        sss_no: employee.sss_no,
+        philhealth_no: employee.philhealth_no,
+        pagibig_no: employee.pagibig_no,
+        tin: employee.tin,
+        emergency_contact_name: employee.emergency_contact_name,
+        emergency_contact_relationship: employee.emergency_contact_relationship,
+        emergency_contact_mobile: employee.emergency_contact_mobile,
+        regular_date: employee.regular_date ?? "",
+        reports_to: employee.reports_to ? String(employee.reports_to) : ""
     }
 }
 
@@ -77,5 +95,8 @@ export function formToPayload(form: EmployeeForm): EmployeePayload {
         ...form,
         department: form.department ? Number(form.department) : null,
         position: form.position ? Number(form.position) : null,
+        reports_to: form.reports_to ? Number(form.reports_to) : null,
+        regular_date: form.regular_date || null,
+
     }
 }

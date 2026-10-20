@@ -19,7 +19,18 @@ export interface Employee {
     employment_type_display: string;
     work_setup: string;
     hire_date: string;
+    sss_no: string;
+    philhealth_no: string;
+    pagibig_no: string;
+    tin: string;
+    emergency_contact_name: string;
+    emergency_contact_relationship: string;
+    emergency_contact_mobile: string;
+    regular_date: string | null;
+    reports_to_name: string | null;
+    reports_to: number | null;
     is_active: boolean;
+
 }
 
 export type EmployeePayload = {
@@ -37,6 +48,15 @@ export type EmployeePayload = {
     employment_type: string;
     work_setup: string;
     hire_date: string;
+    sss_no: string;
+    philhealth_no: string;
+    pagibig_no: string;
+    tin: string;
+    emergency_contact_name: string;
+    emergency_contact_relationship: string;
+    emergency_contact_mobile: string;
+    regular_date: string | null;
+    reports_to: number | null;
 };
 
 export type EmployeeFilters = {
