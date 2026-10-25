@@ -1,8 +1,15 @@
 from apps.users.permissions import IsHROrAdmin
-from rest_framework import filters, viewsets
 
 from ..models import Employee
 from ..serializers import EmployeeSerializer
+
+from django.db import transaction
+from rest_framework import status, filters, viewsets
+from rest_framework.decorators import action
+from rest_framework.response import Response
+
+from apps.users.models import User
+from apps.users.serializers import AccountCreateSerializer, UserSerializer
 
 
 class EmployeeViewSet(viewsets.ModelViewSet):
@@ -38,3 +45,28 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         # Huwag burahin ang employee record: i-deactivate lang
         instance.is_active = False
         instance.save(update_fields=["is_active"])
+
+    @action(detail=True, methods=["post"])
+    def account(self, request, pk=None):
+        employee = self.get_object()
+
+        if employee.user_id:
+            return Response({"detail": "This employee already has an account."}, status=status.HTTP_400_BAD_REQUEST)
+
+        serializer = AccountCreateSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        with transaction.atomic():
+            user = User.objects.create_user(
+                username=data["username"],
+                password=data["password"],
+                role=data["role"],
+                email=employee.email,
+                first_name=employee.first_name,
+                last_name=employee.last_name,
+            )
+            employee.user = user
+            employee.save(update_fields=["user"])
+
+        return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
