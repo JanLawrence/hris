@@ -12,6 +12,7 @@ import { employmentTypeOptions, civilStatusOption, workSetupOption } from '@/fea
 
 import { useDepartmentOptions } from '@/features/settings/hooks/useDepartments';
 import { usePositionOptions } from '@/features/settings/hooks/usePositions';
+import { useEmployeesOptions } from "../../hooks/useEmployees";
 
 const labelOf = (options: Option[], value: string) =>
     options.find((o) => o.value === value)?.label ?? ""
@@ -50,11 +51,13 @@ export default function ReviewStep({ form, sameAsPresent, onEditStep }: Props){
 
     const { options: departmentOptions } = useDepartmentOptions();
     const { options: positionOptions } = usePositionOptions();
+    const { options: employeeOptions } = useEmployeesOptions();
 
     const fullName = [form.first_name, form.middle_name, form.last_name].filter(Boolean).join(" ")
     const initials = ((form.first_name[0] ?? "") + (form.last_name[0] ?? "")).toUpperCase()
     const departmentLabel = labelOf(departmentOptions, form.department)
     const positionLabel = labelOf(positionOptions, form.position)
+    const reportsToLabel = labelOf(employeeOptions, form.reports_to)
 
     return (
         <div className="flex flex-col gap-4">
@@ -94,6 +97,8 @@ export default function ReviewStep({ form, sameAsPresent, onEditStep }: Props){
                 <ReviewRow label="Employment type" value={labelOf(employmentTypeOptions, form.employment_type)} />
                 <ReviewRow label="Work setup" value={labelOf(workSetupOption, form.work_setup)} />
                 <ReviewRow label="Hire date" value={formatDate(form.hire_date)} />
+                <ReviewRow label="Regular date" value={formatDate(form.regular_date)} />
+                <ReviewRow label="Reports To" value={reportsToLabel} />
             </ReviewSection>
 
 

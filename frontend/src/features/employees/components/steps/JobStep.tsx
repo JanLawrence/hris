@@ -15,14 +15,17 @@ type Props = {
     form: EmployeeForm
     errors: FieldErrors
     update: (field: keyof EmployeeForm, value: string) => void
+    currentEmployeeId?: number
 }
 
 
-export default function JobStep({ form, errors, update }: Props) {
+export default function JobStep({ form, errors, update, currentEmployeeId}: Props) {
     
     const { options: departmentOptions, isLoading: isLoadingDepartmentOptions } = useDepartmentOptions();
     const { options: positionOptions, isLoading: isLoadingPositionOptions } = usePositionOptions();
     const { options: employeeOptions, isLoading: isLoadingEmployeeOptions } = useEmployeesOptions();
+
+    const managerOptions = employeeOptions.filter((o) => o.value !== String(currentEmployeeId));
 
     return (
         <div className="flex flex-col gap-y-5">
@@ -88,12 +91,11 @@ export default function JobStep({ form, errors, update }: Props) {
                 <SelectField
                     label="Reports To"
                     name="reports_to"
-                    options={employeeOptions}
+                    options={managerOptions}
                     loading={isLoadingEmployeeOptions}
                     value={form.reports_to}
                     onChange={(v) => update('reports_to', v)}
                     placeholder="Select Reports To"
-                    required
                     error={errors.reports_to}
                 />
             </div>

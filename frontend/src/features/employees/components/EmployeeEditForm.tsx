@@ -137,6 +137,7 @@ export default function EmployeeEditForm({ employee, onErrorStep }: Props) {
                             form={form}
                             errors={errors}
                             update={update}
+                            currentEmployeeId={employee.id}
                         />
                     </CardContent>
                 </Card>
