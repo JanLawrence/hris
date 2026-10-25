@@ -96,6 +96,15 @@ export default function ReviewStep({ form, sameAsPresent, onEditStep }: Props){
                 <ReviewRow label="Hire date" value={formatDate(form.hire_date)} />
             </ReviewSection>
 
+
+            <ReviewSection title="Government IDs" onEdit={() => onEditStep(2)}>
+                <ReviewRow label="SSS" value={form.sss_no} />
+                <ReviewRow label="PhilHealth" value={form.philhealth_no} />
+                <ReviewRow label="Pag-IBIG" value={form.pagibig_no} />
+                <ReviewRow label="TIN" value={form.tin} />
+               
+            </ReviewSection>
+
             <p className="flex items-start gap-2 rounded-md bg-muted p-3 text-sm text-muted-foreground">
                 <Info className="mt-0.5 size-4 shrink-0" />
                 Employee ID is assigned automatically after you create the record.

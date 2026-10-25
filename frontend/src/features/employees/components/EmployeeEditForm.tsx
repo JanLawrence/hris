@@ -19,6 +19,8 @@ import {
 import { toast } from '@/components/ui/toast';
 
 import { useSaveEmployee } from "../hooks/useEmployeeMutations"
+import GovIdsStep from "./steps/GovIdsStep";
+import EmergencyContactFields from "./EmergencyContactFields";
 
 type Props = {
     employee: Employee
@@ -110,14 +112,16 @@ export default function EmployeeEditForm({ employee, onErrorStep }: Props) {
                         <CardDescription>Basic personal information.</CardDescription>
                     </CardHeader>
                     <CardContent>
-                        <BasicInfoStep
-                            form={form}
-                            errors={errors}
-                            update={update}
-                            sameAsPresent={sameAsPresent}
-                            onSameAsPresentChange={handleSameAsPresent}
-                        />
-
+                        <div className="flex flex-col gap-y-6">
+                            <BasicInfoStep
+                                form={form}
+                                errors={errors}
+                                update={update}
+                                sameAsPresent={sameAsPresent}
+                                onSameAsPresentChange={handleSameAsPresent}
+                            />
+                            <EmergencyContactFields form={form} errors={errors} update={update} />
+                        </div>
                     </CardContent>
                 </Card>
             </TabsContent>
@@ -130,6 +134,21 @@ export default function EmployeeEditForm({ employee, onErrorStep }: Props) {
                     </CardHeader>
                     <CardContent>
                         <JobStep
+                            form={form}
+                            errors={errors}
+                            update={update}
+                        />
+                    </CardContent>
+                </Card>
+            </TabsContent>
+            <TabsContent value="government">
+                <Card className="mx-6 my-5">
+                    <CardHeader>
+                        <CardTitle>Government</CardTitle>
+                        <CardDescription>Government ID details.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                        <GovIdsStep
                             form={form}
                             errors={errors}
                             update={update}

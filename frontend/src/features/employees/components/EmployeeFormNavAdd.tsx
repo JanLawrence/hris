@@ -21,10 +21,12 @@ import { formToPayload, INITIAL_FORM, type EmployeeForm, type FieldErrors, STEP_
 import BasicInfoStep from "./steps/BasicInfoStep";
 import JobStep from "./steps/JobStep";
 import ReviewStep from "./steps/ReviewStep";
+import GovIdsStep from "./steps/GovIdsStep";
 
 const STEPS = [
     { title: "Basic info", subtitle: "Name, birthdate, contact" },
     { title: "Job", subtitle: "Position, department, hired date" },
+    { title: "Government", subtitle: "Government ID Details" },
     { title: "Review", subtitle: "Check and create" },
 ]
 
@@ -161,7 +163,7 @@ export default function EmployeeFormNavAdd(){
                     )
                     })}
                 <p className="mt-2 rounded-md border border-dashed border-gray-300 p-3 text-xs text-muted-foreground">
-                    Only the essentials here. Gov't IDs, documents and other details are filled in on the profile after creating.
+                    Only the essentials here. Documents and other details can be added on the profile after creating.
                 </p>
                 </aside>
 
@@ -192,6 +194,13 @@ export default function EmployeeFormNavAdd(){
                         )}
 
                         {current === 2 && (
+                            <GovIdsStep 
+                                form={form}
+                                errors={errors}
+                                update={update}
+                            />
+                        )}
+                        {current === 3 && (
                             <ReviewStep form={form} sameAsPresent={sameAsPresent} onEditStep={setCurrent} />
                         )}
                     </CardContent>

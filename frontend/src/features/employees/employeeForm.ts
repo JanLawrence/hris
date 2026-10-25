@@ -32,8 +32,11 @@ export const REQUIRED_FIELDS: (keyof EmployeeForm)[] = [
 ]
 
 export const STEP_FIELDS: (keyof EmployeeForm)[][] = [
-    ["first_name", "middle_name", "last_name", "birth_date", "civil_status", "email", "mobile_no", "present_address", "permanent_address"],
-    ["department", "position", "employment_type", "work_setup", "hire_date"],
+    ["first_name", "middle_name", "last_name", "birth_date", "civil_status", "email", "mobile_no", "present_address", "permanent_address", 
+        "emergency_contact_name", "emergency_contact_mobile", "emergency_contact_relationship"
+    ],
+    ["department", "position", "employment_type", "work_setup", "hire_date", "regular_date", "reports_to"],
+    ["sss_no", "philhealth_no", "pagibig_no", "tin"],
 ]
 
 export type EmployeeForm = typeof INITIAL_FORM

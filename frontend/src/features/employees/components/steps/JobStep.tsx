@@ -1,4 +1,4 @@
-import { type EmployeeForm, type FieldErrors } from "@/features/employees/employeeForm";
+import { type EmployeeForm, type FieldErrors } from "@/features/employees/employeeForm"; 
 
 import { format, parseISO } from "date-fns"
 
@@ -8,6 +8,7 @@ import { workSetupOption, employmentTypeOptions } from '@/features/employees/con
 
 import { useDepartmentOptions } from '@/features/settings/hooks/useDepartments';
 import { usePositionOptions } from '@/features/settings/hooks/usePositions';
+import { useEmployeesOptions } from "../../hooks/useEmployees";
 
 
 type Props = {
@@ -21,6 +22,7 @@ export default function JobStep({ form, errors, update }: Props) {
     
     const { options: departmentOptions, isLoading: isLoadingDepartmentOptions } = useDepartmentOptions();
     const { options: positionOptions, isLoading: isLoadingPositionOptions } = usePositionOptions();
+    const { options: employeeOptions, isLoading: isLoadingEmployeeOptions } = useEmployeesOptions();
 
     return (
         <div className="flex flex-col gap-y-5">
@@ -70,11 +72,29 @@ export default function JobStep({ form, errors, update }: Props) {
                     error={errors.work_setup}
                 />
             </div>
-            <div className="grid grid-cols-2  gap-x-4 gap-y-5">
+            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
                 <DatePickerField label="Hire Date" name="hire_date" required
                     value={form.hire_date ? parseISO(form.hire_date) : undefined}
                     onChange={(date) => update('hire_date', date ? format(date, 'yyyy-MM-dd') : '')} 
                     error={errors.hire_date}
+                />
+                <DatePickerField label="Regularization Date" name="regular_date"
+                    value={form.regular_date ? parseISO(form.regular_date) : undefined} minDate={form.hire_date ? parseISO(form.hire_date) : undefined}
+                    onChange={(date) => update('regular_date', date ? format(date, 'yyyy-MM-dd') : '')} 
+                    error={errors.regular_date}
+                />
+            </div>
+            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+                <SelectField
+                    label="Reports To"
+                    name="reports_to"
+                    options={employeeOptions}
+                    loading={isLoadingEmployeeOptions}
+                    value={form.reports_to}
+                    onChange={(v) => update('reports_to', v)}
+                    placeholder="Select Reports To"
+                    required
+                    error={errors.reports_to}
                 />
             </div>
         </div>

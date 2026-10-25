@@ -18,7 +18,7 @@ import { getInitials } from "@/utils/text"
 import { useEmployee } from "../hooks/useEmployees"
 import EmployeeEditForm from "./EmployeeEditForm"
 
-const STEPS = ["personal", "employment"] as const
+const STEPS = ["personal", "employment", "government"] as const
 type Step = (typeof STEPS)[number]
 
 const triggerClass =
@@ -89,6 +89,7 @@ export default function EmployeeFormNav(){
                 <TabsList variant="line" className="group-data-horizontal/tabs:h-auto p-0 gap-2">
                     <TabsTrigger value="personal" className={triggerClass}>Personal</TabsTrigger>
                     <TabsTrigger value="employment" className={triggerClass}>Employment</TabsTrigger>
+                    <TabsTrigger value="government" className={triggerClass}>Government</TabsTrigger>
                 </TabsList>
             </header>
 
