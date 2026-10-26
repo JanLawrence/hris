@@ -20,7 +20,7 @@ class EmployeeViewSet(viewsets.ModelViewSet):
     ordering_fields = ["last_name", "hire_date", "employee_no"]
 
     def get_queryset(self):
-        qs = Employee.objects.select_related("department", "position", "reports_to")
+        qs = Employee.objects.select_related("department", "position", "reports_to", "user")
         params = self.request.query_params
 
         if self.action == 'list':

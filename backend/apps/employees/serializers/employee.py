@@ -1,3 +1,4 @@
+from apps.users.serializers import UserSerializer
 from rest_framework import serializers
 from uuid import uuid4
 from django.db import transaction
@@ -7,6 +8,7 @@ from ..models import Employee
 class EmployeeSerializer(serializers.ModelSerializer):
 
     # pang-display lang (read-only)
+    account = UserSerializer(source="user", read_only=True)
     department_name = serializers.CharField(source="department.name", read_only=True, default=None)
     position_title = serializers.CharField(source="position.title", read_only=True, default=None)
     reports_to_name = serializers.SerializerMethodField()
@@ -26,7 +28,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "employment_type", "employment_type_display", "work_setup",
             "hire_date", "regular_date",
             "sss_no", "philhealth_no", "pagibig_no", "tin",
-            "is_active", "created_at", "updated_at",
+            "is_active", "created_at", "updated_at", "account"
         ]
         read_only_fields = ["employee_no", "created_at", "updated_at"]
 
