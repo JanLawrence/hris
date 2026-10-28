@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import { Badge } from "@/components/ui/badge"
 import {
     Tabs,
+    TabsContent,
     TabsList,
     TabsTrigger,
 } from "@/components/ui/tabs"
@@ -17,8 +18,9 @@ import { cn } from "cn"
 import { getInitials } from "@/utils/text"
 import { useEmployee } from "../hooks/useEmployees"
 import EmployeeEditForm from "./EmployeeEditForm"
+import EmployeeAccountSection from "./EmployeeAccountSection"
 
-const STEPS = ["personal", "employment", "government"] as const
+const STEPS = ["personal", "employment", "government", "account"] as const
 type Step = (typeof STEPS)[number]
 
 const triggerClass =
@@ -90,10 +92,16 @@ export default function EmployeeFormNav(){
                     <TabsTrigger value="personal" className={triggerClass}>Personal</TabsTrigger>
                     <TabsTrigger value="employment" className={triggerClass}>Employment</TabsTrigger>
                     <TabsTrigger value="government" className={triggerClass}>Government</TabsTrigger>
+                    <TabsTrigger value="account" className={triggerClass}>Account</TabsTrigger>
                 </TabsList>
             </header>
 
             {employee && <EmployeeEditForm employee={employee} onErrorStep={(i) => setStep(STEPS[i])} />}
+            {employee && (
+                <TabsContent value="account">
+                    <EmployeeAccountSection employee={employee} />
+                </TabsContent>
+            )}
             
         </Tabs>
     )
