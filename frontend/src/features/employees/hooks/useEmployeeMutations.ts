@@ -2,6 +2,8 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createEmployee, deleteEmployee, updateEmployee } from '@/api/employees';
 import type { EmployeePayload } from '@/types/employee';
 import { EMPLOYEES_KEY } from '@/features/employees/hooks/useEmployees';
+import { createEmployeeAccount } from '@/api/employees';
+import type { AccountPayload } from '@/types/auth';
 
 export function useSaveEmployee() {
   const queryClient = useQueryClient();
@@ -18,6 +20,16 @@ export function useDeleteEmployee() {
 
   return useMutation({
     mutationFn: (id: number) => deleteEmployee(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: EMPLOYEES_KEY }),
+  });
+}
+
+export function useCreateEmployeeAccount() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: ({ id, data }: { id: number; data: AccountPayload }) =>
+      createEmployeeAccount(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: EMPLOYEES_KEY }),
   });
 }

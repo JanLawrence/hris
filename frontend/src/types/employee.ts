@@ -1,3 +1,5 @@
+import type { AuthUser } from "@/types/auth"
+
 export interface Employee {
     id: number;
     full_name: string
@@ -30,7 +32,7 @@ export interface Employee {
     reports_to_name: string | null;
     reports_to: number | null;
     is_active: boolean;
-
+    account: AuthUser | null;
 }
 
 export type EmployeePayload = {

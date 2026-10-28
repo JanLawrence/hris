@@ -18,3 +18,9 @@ export type TokenPair = {
     access: string; 
     refresh: string
 };
+
+export type AccountPayload = {
+    username: string;
+    password: string;
+    role: Role;
+};
