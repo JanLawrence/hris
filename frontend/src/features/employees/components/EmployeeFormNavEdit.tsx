@@ -84,7 +84,9 @@ export default function EmployeeFormNav(){
                         <p className="mb-6 text-sm text-destructive">Employee not found.</p>
                     )}
                     <div className="flex items-center gap-3 mb-7">
-                        <Button type="submit" form="employee-edit-form" variant={'default'} size={'lg'} className={'gap-1'}>Save Changes</Button>
+                        {step !== "account" && (
+                            <Button type="submit" form="employee-edit-form" variant={'default'} size={'lg'} className={'gap-1'}>Save Changes</Button>
+                        )}
 
                     </div>
                 </div>
