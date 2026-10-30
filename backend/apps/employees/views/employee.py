@@ -2,13 +2,12 @@ from apps.users.permissions import IsHROrAdmin
 
 from ..models import Employee
 from ..serializers import EmployeeSerializer
+from ..services import create_account_for
 
-from django.db import transaction
 from rest_framework import status, filters, viewsets
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from apps.users.models import User
 from apps.users.serializers import AccountCreateSerializer, UserSerializer
 
 
@@ -24,25 +23,21 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         params = self.request.query_params
 
         if self.action == 'list':
-            # ?status=active | inactive | all  (para sa ButtonGroup mo)
             status = params.get("status", "active")
             if status == "active":
                 qs = qs.filter(is_active=True)
             elif status == "inactive":
                 qs = qs.filter(is_active=False)
 
-            # ?department=1,3  (para sa MultiSelect mo)
             if departments := params.get("department"):
                 qs = qs.filter(department_id__in=departments.split(","))
 
-            # ?employment_type=regular,probationary
             if types := params.get("employment_type"):
                 qs = qs.filter(employment_type__in=types.split(","))
 
         return qs
 
     def perform_destroy(self, instance):
-        # Huwag burahin ang employee record: i-deactivate lang
         instance.is_active = False
         instance.save(update_fields=["is_active"])
 
@@ -57,16 +52,6 @@ class EmployeeViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
-        with transaction.atomic():
-            user = User.objects.create_user(
-                username=data["username"],
-                password=data["password"],
-                role=data["role"],
-                email=employee.email,
-                first_name=employee.first_name,
-                last_name=employee.last_name,
-            )
-            employee.user = user
-            employee.save(update_fields=["user"])
+        user = create_account_for(employee, data)
 
         return Response(UserSerializer(user).data, status=status.HTTP_201_CREATED)
