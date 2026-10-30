@@ -1,4 +1,5 @@
-from apps.users.serializers import UserSerializer
+from apps.users.serializers import UserSerializer, AccountCreateSerializer
+from apps.employees.services import create_account_for
 from rest_framework import serializers
 from uuid import uuid4
 from django.db import transaction
@@ -7,8 +8,8 @@ from ..models import Employee
 
 class EmployeeSerializer(serializers.ModelSerializer):
 
-    # pang-display lang (read-only)
     account = UserSerializer(source="user", read_only=True)
+    new_account = AccountCreateSerializer(write_only=True, required=False)
     department_name = serializers.CharField(source="department.name", read_only=True, default=None)
     position_title = serializers.CharField(source="position.title", read_only=True, default=None)
     reports_to_name = serializers.SerializerMethodField()
@@ -28,7 +29,7 @@ class EmployeeSerializer(serializers.ModelSerializer):
             "employment_type", "employment_type_display", "work_setup",
             "hire_date", "regular_date",
             "sss_no", "philhealth_no", "pagibig_no", "tin",
-            "is_active", "created_at", "updated_at", "account"
+            "is_active", "created_at", "updated_at", "account", "new_account"
         ]
         read_only_fields = ["employee_no", "created_at", "updated_at"]
 
@@ -51,11 +52,20 @@ class EmployeeSerializer(serializers.ModelSerializer):
 
 
     def create(self, validated_data):
+        account_data = validated_data.pop("new_account", None)
+
         with transaction.atomic():
             temp_no = uuid4().hex[:20]
             employee = Employee.objects.create(employee_no=temp_no, **validated_data)
 
             employee.employee_no = f"EMP-{employee.pk:05d}"
             employee.save(update_fields=["employee_no"])
+            if account_data:
+                create_account_for(employee, account_data)
 
         return employee
+
+    def update(self, instance, validated_data):
+        if "new_account" in validated_data:
+            raise serializers.ValidationError({"new_account": "Use the account endpoint to add an account."})
+        return super().update(instance, validated_data)
