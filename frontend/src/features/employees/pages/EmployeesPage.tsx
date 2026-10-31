@@ -84,9 +84,15 @@ export default function EmployeesPage() {
         </div>
         <Button variant={'default'} size={'lg'} className={'gap-1'}  onClick={() => navigate('/employees/form/add')}><CirclePlus /> Add Employee</Button>
       </header>
-      <header className="border-b border-gray-200 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 px-6 py-5 bg-[#fafaf8]">
-        <div className="grid w-full max-w-4xl grid-cols-1 md:grid-cols-[3fr_1fr_1fr] gap-4">
-          <InputField name="Search" label="Search" onChange={(e) => setSearch(e.target.value)} />
+      <header className="border-b border-gray-200 flex flex-col lg:flex-row items-stretch lg:items-center justify-between gap-4 px-6 py-5 bg-[#fafaf8]">
+        <div className="grid w-full max-w-4xl grid-cols-1 sm:grid-cols-2 lg:grid-cols-[3fr_1fr_1fr] gap-4">
+          <div className="sm:col-span-2 lg:col-span-1">
+            <InputField 
+              name="Search" 
+              label="Search" 
+              onChange={(e) => setSearch(e.target.value)} 
+            />
+          </div>
           <MultiSelectField
             label="Department"
             name="deparment"
