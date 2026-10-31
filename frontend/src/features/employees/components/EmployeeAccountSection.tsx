@@ -10,17 +10,12 @@ import type { Role } from "@/config/navigation";
 import InputField from "@/components/form/InputField";
 import SelectField from "@/components/form/SelectField";
 import { Button } from "@/components/ui/button";
+import { roleOptions } from "@/features/employees/constants";
+import type { AccountErrors } from "../employeeForm";
 
 type Props = {
     employee: Employee
 }
-
-type AccountErrors = { username?: string; password?: string; role?: string }
-
-const roleOptions = [
-    {label: 'Employee', value: 'employee'},
-    {label: 'HR', value: 'hr'},
-]
 
 export default function EmployeeAccountSection({ employee }: Props) {
     const account = employee.account

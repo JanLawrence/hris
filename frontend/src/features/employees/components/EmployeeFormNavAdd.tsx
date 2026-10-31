@@ -16,17 +16,20 @@ import { toast } from '@/components/ui/toast';
 
 import { useSaveEmployee } from "../hooks/useEmployeeMutations"
 
-import { formToPayload, INITIAL_FORM, type EmployeeForm, type FieldErrors, STEP_FIELDS, validateStep } from "../employeeForm";
+import { formToPayload, INITIAL_FORM, type EmployeeForm, type FieldErrors, STEP_FIELDS, validateStep, type AccountErrors, validateAccount } from "../employeeForm";
 
 import BasicInfoStep from "./steps/BasicInfoStep";
 import JobStep from "./steps/JobStep";
 import ReviewStep from "./steps/ReviewStep";
 import GovIdsStep from "./steps/GovIdsStep";
+import type { AccountPayload } from "@/types/auth";
+import AccountStep from "./steps/AccountStep";
 
 const STEPS = [
     { title: "Basic info", subtitle: "Name, birthdate, contact" },
     { title: "Job", subtitle: "Position, department, hired date" },
     { title: "Government", subtitle: "Government ID Details" },
+    { title: "Account", subtitle: "Login access" },
     { title: "Review", subtitle: "Check and create" },
 ]
 
@@ -41,12 +44,24 @@ export default function EmployeeFormNavAdd(){
 
 
     const [sameAsPresent, setSameAsPresent] = useState(false)
+    const [withAccount, setWithAccount] = useState(false)
+    const [account, setAccount] = useState<AccountPayload>({
+        username: "",
+        password: "",
+        role: "employee",
+    })
+    const [accountErrors, setAccountErrors] = useState<AccountErrors>({})
 
     const isLast = current === STEPS.length - 1
 
     const update = (field: keyof EmployeeForm, value: string) => {
         setForm((prev) => ({ ...prev, [field]: value }))
         setErrors((prev) => ({...prev, [field]: undefined }))
+    }
+
+    const updateAccount = (field: keyof AccountPayload, value: string) => {
+        setAccount((prev) => ({ ...prev, [field]: value }))
+        setAccountErrors((prev) => ({...prev, [field]: undefined }))
     }
 
     const handleSameAsPresent = (checked: boolean) => {
@@ -63,6 +78,15 @@ export default function EmployeeFormNavAdd(){
         if (Object.keys(newErrors).length > 0) {
             return;
         }
+
+        if(current === 3 && withAccount){
+            const newAccountErrors = validateAccount(account)
+            setAccountErrors(newAccountErrors)
+
+            if (Object.keys(newAccountErrors).length > 0) {
+                return;
+            }
+        }
         setCurrent(current + 1)
         
     }
@@ -70,7 +94,12 @@ export default function EmployeeFormNavAdd(){
     const handleCreate = () => {
         const payload = formToPayload(form);
 
+        if(withAccount){
+            payload.new_account = account
+        }
+
         setErrors({})
+        setAccountErrors({})
 
         const toastId = toast.add({ type: 'loading', title: 'Saving employee...'});
       
@@ -88,12 +117,23 @@ export default function EmployeeFormNavAdd(){
                 if (data) {
                     const newErrors: FieldErrors = {}
                     for (const field in data) {
+                        if (field === "new_account") continue
                         newErrors[field as keyof EmployeeForm] = data[field][0]
                     }
                     setErrors(newErrors)
+                    if ("new_account" in data) {
+                        const accountData = data.new_account as unknown as Record<string, string[]>
+                        const newAccountErrors: AccountErrors = {}
+                        for (const field in accountData) {
+                            newAccountErrors[field as keyof AccountPayload] = accountData[field][0]
+                        }
+                        setAccountErrors(newAccountErrors)
+                    }
                     const errorStep = STEP_FIELDS.findIndex((fields) => fields.some((f) => f in newErrors))
                     if (errorStep !== -1) {
                         setCurrent(errorStep)
+                    } else if ("new_account" in data) {
+                        setCurrent(3)
                     }
 
                     toast.update(toastId, { type: 'error', title: 'Please check fields with error.' })
@@ -201,7 +241,22 @@ export default function EmployeeFormNavAdd(){
                             />
                         )}
                         {current === 3 && (
-                            <ReviewStep form={form} sameAsPresent={sameAsPresent} onEditStep={setCurrent} />
+                            <AccountStep
+                                withAccount={withAccount}
+                                onWithAccountChange={setWithAccount}
+                                account={account}
+                                errors={accountErrors}
+                                update={updateAccount}
+                            />
+                        )}
+                        {current === 4 && (
+                            <ReviewStep 
+                                form={form} 
+                                sameAsPresent={sameAsPresent} 
+                                onEditStep={setCurrent}
+                                withAccount={withAccount}
+                                account={account}
+                            />
                         )}
                     </CardContent>
 

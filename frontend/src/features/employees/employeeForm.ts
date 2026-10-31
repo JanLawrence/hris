@@ -1,3 +1,4 @@
+import type { AccountPayload } from "@/types/auth"
 import type { Employee, EmployeePayload } from "@/types/employee"
 
 export const INITIAL_FORM = {
@@ -37,10 +38,12 @@ export const STEP_FIELDS: (keyof EmployeeForm)[][] = [
     ],
     ["department", "position", "employment_type", "work_setup", "hire_date", "regular_date", "reports_to"],
     ["sss_no", "philhealth_no", "pagibig_no", "tin"],
+    [],
 ]
 
 export type EmployeeForm = typeof INITIAL_FORM
 export type FieldErrors = Partial<Record<keyof EmployeeForm, string>>
+export type AccountErrors = Partial<Record<keyof AccountPayload, string>>
 
 export function validateStep(step: number, form: EmployeeForm): FieldErrors {
     const errors: FieldErrors = {}
@@ -63,6 +66,17 @@ export function validateStep(step: number, form: EmployeeForm): FieldErrors {
     }
 
     return errors
+}
+
+export function validateAccount(account: AccountPayload): AccountErrors{
+    const errors: AccountErrors = {}
+    if (!account.username.trim()) {
+        errors.username = 'This field is required.';
+    } 
+    if (account.password.length < 8) {
+        errors.password = 'Password must be at least 8 characters.';
+    }
+    return errors;
 }
 
 export function employeeToForm(employee: Employee): EmployeeForm {

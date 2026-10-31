@@ -20,3 +20,8 @@ export const workSetupOption: Option[] = [
     { value: 'wfh', label: 'Work from home' },
     { value: 'hybrid', label: 'Hybrid' },
 ];
+
+export const roleOptions = [
+    {label: 'Employee', value: 'employee'},
+    {label: 'HR', value: 'hr'},
+]

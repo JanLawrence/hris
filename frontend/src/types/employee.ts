@@ -1,4 +1,4 @@
-import type { AuthUser } from "@/types/auth"
+import type { AccountPayload, AuthUser } from "@/types/auth"
 
 export interface Employee {
     id: number;
@@ -59,6 +59,7 @@ export type EmployeePayload = {
     emergency_contact_mobile: string;
     regular_date: string | null;
     reports_to: number | null;
+    new_account?: AccountPayload;
 };
 
 export type EmployeeFilters = {

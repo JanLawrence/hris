@@ -8,11 +8,12 @@ import { formatDate } from '@/utils/date';
 import { Info } from "lucide-react"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
-import { employmentTypeOptions, civilStatusOption, workSetupOption } from '@/features/employees/constants';
+import { employmentTypeOptions, civilStatusOption, workSetupOption, roleOptions } from '@/features/employees/constants';
 
 import { useDepartmentOptions } from '@/features/settings/hooks/useDepartments';
 import { usePositionOptions } from '@/features/settings/hooks/usePositions';
 import { useEmployeesOptions } from "../../hooks/useEmployees";
+import type { AccountPayload } from "@/types/auth";
 
 const labelOf = (options: Option[], value: string) =>
     options.find((o) => o.value === value)?.label ?? ""
@@ -42,12 +43,13 @@ function ReviewRow({ label, value }: { label: string; value: string }) {
 
 type Props = {
     form: EmployeeForm,
-    sameAsPresent: boolean
-    onEditStep: (step: number) => void
-
+    sameAsPresent: boolean,
+    onEditStep: (step: number) => void,
+    withAccount: boolean,
+    account: AccountPayload
 }
 
-export default function ReviewStep({ form, sameAsPresent, onEditStep }: Props){
+export default function ReviewStep({ form, sameAsPresent, onEditStep, withAccount, account }: Props){
 
     const { options: departmentOptions } = useDepartmentOptions();
     const { options: positionOptions } = usePositionOptions();
@@ -58,6 +60,7 @@ export default function ReviewStep({ form, sameAsPresent, onEditStep }: Props){
     const departmentLabel = labelOf(departmentOptions, form.department)
     const positionLabel = labelOf(positionOptions, form.position)
     const reportsToLabel = labelOf(employeeOptions, form.reports_to)
+    const roleLabel = labelOf(roleOptions, account.role)
 
     return (
         <div className="flex flex-col gap-4">
@@ -107,8 +110,22 @@ export default function ReviewStep({ form, sameAsPresent, onEditStep }: Props){
                 <ReviewRow label="PhilHealth" value={form.philhealth_no} />
                 <ReviewRow label="Pag-IBIG" value={form.pagibig_no} />
                 <ReviewRow label="TIN" value={form.tin} />
-               
             </ReviewSection>
+        
+            <ReviewSection title="Account" onEdit={() => onEditStep(3)}>
+                {withAccount ? (
+                    <>
+                        <ReviewRow label="Username" value={account.username} />
+                        <ReviewRow label="Role" value={roleLabel} />
+                        <ReviewRow label="Password" value={"••••••••"} />
+                    </>
+                ) :
+                    <>
+                        <ReviewRow label="Login account" value={"Not created"} />
+                    </>
+                }
+            </ReviewSection>
+           
 
             <p className="flex items-start gap-2 rounded-md bg-muted p-3 text-sm text-muted-foreground">
                 <Info className="mt-0.5 size-4 shrink-0" />
