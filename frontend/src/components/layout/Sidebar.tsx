@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from 'react-router-dom';
-import { CalendarClock, LogOut } from "lucide-react";
+import { CalendarClock, LogOut, Menu } from "lucide-react";
 import { getNavForRole, type Role } from '@/config/navigation';
 import { useAuth } from '@/features/auth/AuthContext';
 import { capitalize, getInitials } from '@/utils/text';
@@ -8,8 +8,14 @@ import {
   Avatar,
   AvatarFallback
 } from "@/components/ui/avatar"
+import { useState } from 'react';
+import { Sheet, SheetContent } from '@/components/ui/sheet';
 
-export default function Sidebar() {
+type SidebarContentProps = {
+  onNavigate?: () => void
+}
+
+function SidebarContent({ onNavigate }: SidebarContentProps){
   const navigate = useNavigate()
   const { user, logout } = useAuth()
 
@@ -23,7 +29,7 @@ export default function Sidebar() {
   }
 
   return (
-    <aside className="w-56 h-screen sticky top-0 border-r p-4 flex flex-col">
+    <>
       <div className="h-10 flex items-center px-3 mb-7 font-semibold text-lg gap-2"><CalendarClock className="size-4"/> HRIS</div>
       <nav className="space-y-6 flex-1">
         {groups.map((group, i) => (
@@ -46,6 +52,7 @@ export default function Sidebar() {
                         isActive ? 'bg-primary text-primary-foreground' : 'hover:bg-muted'
                       }`
                     }
+                    onClick={onNavigate}
                   >
                     <Icon className="size-4" />
                     {link.label}
@@ -75,6 +82,34 @@ export default function Sidebar() {
           <LogOut className="size-4" />
         </Button>
       </div>
+    </>
+  )
+}
+
+export function MobileHeader() {
+  const [open, setOpen] = useState(false)
+  return (
+    <>
+      <header className="md:hidden flex items-center gap-2 h-14 px-4 border-b bg-white">
+        <Button variant="ghost" size="icon" onClick={() => setOpen(true)} aria-label="Open menu">
+          <Menu />
+        </Button>
+        <CalendarClock className="size-4" /> HRIS
+      </header>
+      <Sheet open={open} onOpenChange={setOpen}>
+          <SheetContent side="left" className="w-56 p-4">
+              <SidebarContent onNavigate={() => setOpen(false)}/>
+          </SheetContent>
+      </Sheet>
+    </>
+  )
+}
+
+export default function Sidebar() {
+
+  return (
+    <aside className="w-56 h-screen sticky top-0 border-r p-4 hidden md:flex flex-col">
+      <SidebarContent />
     </aside>
   );
 }
