@@ -29,7 +29,7 @@ export default function JobStep({ form, errors, update, currentEmployeeId}: Prop
 
     return (
         <div className="flex flex-col gap-y-5">
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-5">
                 <SelectField
                     label="Department"
                     name="department"
@@ -53,7 +53,7 @@ export default function JobStep({ form, errors, update, currentEmployeeId}: Prop
                     error={errors.position}
                 />
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-5">
                 <SelectField
                     label="Employment Type"
                     name="employment_type"
@@ -75,7 +75,7 @@ export default function JobStep({ form, errors, update, currentEmployeeId}: Prop
                     error={errors.work_setup}
                 />
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-5">
                 <DatePickerField label="Hire Date" name="hire_date" required
                     value={form.hire_date ? parseISO(form.hire_date) : undefined}
                     onChange={(date) => update('hire_date', date ? format(date, 'yyyy-MM-dd') : '')} 
@@ -87,7 +87,7 @@ export default function JobStep({ form, errors, update, currentEmployeeId}: Prop
                     error={errors.regular_date}
                 />
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-5">
                 <SelectField
                     label="Reports To"
                     name="reports_to"

@@ -23,7 +23,7 @@ export default function BasicInfoStep({ form, errors, update, sameAsPresent, onS
     
     return (
         <div className="flex flex-col gap-y-5">
-            <div className="grid grid-cols-3 gap-x-4 gap-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-5">
                 <InputField name="first_name" label="First Name" autoFocus required={true} error={errors.first_name}
                     value={form.first_name} onChange={(e) => update('first_name', e.target.value)} />
                 <InputField name="middle_name" label="Middle Name" error={errors.middle_name}
@@ -31,7 +31,7 @@ export default function BasicInfoStep({ form, errors, update, sameAsPresent, onS
                 <InputField name="last_name" label="Last Name" required={true} error={errors.last_name}
                     value={form.last_name} onChange={(e) => update('last_name', e.target.value)} />
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-5">
                 <DatePickerField label="Birth Date" name="birth_date" required
                     value={form.birth_date ? parseISO(form.birth_date) : undefined} error={errors.birth_date}
                     onChange={(date) => update('birth_date', date ? format(date, 'yyyy-MM-dd') : '')}
@@ -46,13 +46,13 @@ export default function BasicInfoStep({ form, errors, update, sameAsPresent, onS
                     error={errors.civil_status}
                 />
             </div>
-            <div className="grid grid-cols-2 gap-x-4 gap-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-5">
                 <InputField name="email" label="Email" required={true} type="email" error={errors.email}
                     value={form.email} onChange={(e) => update('email', e.target.value)} />
                 <InputField name="mobile_no" label="Mobile No." required={true} error={errors.mobile_no}
                     value={form.mobile_no} onChange={(e) => update('mobile_no', e.target.value)} />
             </div>
-            <div className="grid grid-cols-2  gap-x-4 gap-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-5">
                 <div>
                     <TextareaField name="present_address" label="Present Address" required={true} rows={5}
                         value={form.present_address} onChange={(e) => {

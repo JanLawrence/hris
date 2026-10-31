@@ -169,8 +169,28 @@ export default function EmployeeFormNavAdd(){
             </header>
 
             {/* BODY */}
-            <div className="flex flex-1 gap-5 p-4">
-                <aside className="flex w-60 shrink-0 flex-col gap-2">
+            <div className="flex flex-1 gap-5 p-4 flex-col lg:flex-row">
+                <div className="lg:hidden flex flex-col gap-1">
+                    <span className="text-xs text-muted-foreground">Step {current + 1} of {STEPS.length}</span>
+                    <span className="text-lg font-semibold">{STEPS[current].title}</span>
+                    <span className="text-sm text-muted-foreground">{STEPS[current].subtitle}</span>
+
+                    <div className="flex gap-1">
+                        {STEPS.map((s, i) => (
+                            <button
+                                key={s.title}
+                                type="button"
+                                disabled={i > current}
+                                onClick={() => setCurrent(i)}
+                                aria-label={s.title}
+                                className="flex-1 py-2"
+                            >
+                                <span className={cn("block h-1.5 rounded-full", i <= current ? "bg-indigo-700" : "bg-gray-200")} />
+                            </button>
+                        ))}
+                    </div>
+                </div>
+                <aside className="hidden lg:flex w-60 shrink-0 flex-col gap-2">
                 {STEPS.map((s, i) => {
                     const status = i < current ? "done" : i === current ? "current" : "upcoming"
 
@@ -208,7 +228,7 @@ export default function EmployeeFormNavAdd(){
                 </aside>
 
                 <Card className="flex flex-1 flex-col">
-                    <CardHeader>
+                    <CardHeader className="hidden md:grid">
                         <CardTitle>{STEPS[current].title}</CardTitle>
                     </CardHeader>
                     

@@ -14,7 +14,7 @@ export default function EmergencyContactFields({ form, errors, update }: Props) 
     return (
         <div className="flex flex-col gap-y-5 border-t pt-6">
             <div className="text-sm font-medium">Emergency Contact</div>
-            <div className="grid grid-cols-3 gap-x-4 gap-y-5">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-x-4 gap-y-5">
                 <InputField name="emergency_contact_name" label="Name" error={errors.emergency_contact_name}
                     value={form.emergency_contact_name} onChange={(e) => update('emergency_contact_name', e.target.value)} />
                 <InputField name="emergency_contact_relationship" label="Relationship" error={errors.emergency_contact_relationship}

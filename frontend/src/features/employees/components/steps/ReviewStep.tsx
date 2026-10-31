@@ -25,7 +25,7 @@ function ReviewSection({ title, onEdit, children }: { title: string; onEdit: () 
                 <h3 className="text-sm font-semibold">{title}</h3>
                 <Button variant="link" size="sm" className="h-auto p-0" onClick={onEdit}>Edit</Button>
             </div>
-            <dl className="grid grid-cols-[160px_1fr] gap-x-4 gap-y-2 text-sm">
+            <dl className="grid grid-cols-1 sm:grid-cols-[160px_1fr] gap-x-4 gap-y-2 text-sm">
                 {children}
             </dl>
         </section>
