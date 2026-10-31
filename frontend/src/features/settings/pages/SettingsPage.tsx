@@ -10,9 +10,9 @@ export default function SettingsPage() {
         </div>
         {/* <Button variant={'default'} size={'lg'} className={'gap-1'}><SaveCheck /> Save Settings</Button> */}
       </header>
-      <div className="flex flex-1">
+      <div className="flex flex-1 flex-col lg:flex-row">
         <SettingsSidebar />
-        <section className="flex-1 p-6">
+        <section className="flex-1 min-w-0 p-4 md:p-6">
           <Outlet />
         </section>
       </div>

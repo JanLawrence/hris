@@ -114,7 +114,6 @@ export default function PositionFormSheet({ open, onOpenChange, position }: Prop
                             label="Active"
                             description="Inactive positions are hidden."
                             checked={isActive}
-                            required={true}
                             onCheckedChange={setIsActive}
                         />
                     </div>

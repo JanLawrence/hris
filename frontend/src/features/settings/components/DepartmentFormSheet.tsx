@@ -129,7 +129,6 @@ export default function DepartmentFormSheet({ open, onOpenChange, department }: 
                             label="Active"
                             description="Inactive departments are hidden."
                             checked={isActive}
-                            required={true}
                             onCheckedChange={setIsActive}
                         />
                     </div>

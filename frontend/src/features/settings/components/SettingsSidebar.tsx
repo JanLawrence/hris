@@ -14,8 +14,8 @@ const settingsLinks: SettingsLink[] = [
 
 export default function SettingsSidebar() {
   return (
-    <aside className="w-56 shrink-0 border-r p-4 bg-[#fafaf8]">
-      <nav className="space-y-1">
+    <aside className="lg:w-56 shrink-0 border-b lg:border-r lg:border-b-0 p-4 bg-[#fafaf8]">
+      <nav className="flex gap-1 lg:flex-col">
         {settingsLinks.map((link) => {
           const Icon = link.icon;
           return (
