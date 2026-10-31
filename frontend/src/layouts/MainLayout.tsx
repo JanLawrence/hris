@@ -6,7 +6,7 @@ export default function MainLayout() {
   return (
     <div className="min-h-screen flex">
       <Sidebar />
-      <div className="flex flex-1 flex-col">
+      <div className="flex flex-1 flex-col min-w-0">
         <MobileHeader />
         <main className="flex-1 bg-[#f3f3f0]">
           <Outlet />
