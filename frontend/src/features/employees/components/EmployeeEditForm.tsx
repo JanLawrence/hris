@@ -106,7 +106,7 @@ export default function EmployeeEditForm({ employee, onErrorStep }: Props) {
     return (
         <form id="employee-edit-form" onSubmit={handleSave}>
             <TabsContent value="personal">
-                <Card className="mx-6 my-5">
+                <Card className="mx-4 md:mx-6 my-5">
                     <CardHeader>
                         <CardTitle>Personal</CardTitle>
                         <CardDescription>Basic personal information.</CardDescription>
@@ -127,7 +127,7 @@ export default function EmployeeEditForm({ employee, onErrorStep }: Props) {
             </TabsContent>
 
             <TabsContent value="employment">
-                <Card className="mx-6 my-5">
+                <Card className="mx-4 md:mx-6 my-5">
                     <CardHeader>
                         <CardTitle>Employment</CardTitle>
                         <CardDescription>Position, department and employment details.</CardDescription>
@@ -143,7 +143,7 @@ export default function EmployeeEditForm({ employee, onErrorStep }: Props) {
                 </Card>
             </TabsContent>
             <TabsContent value="government">
-                <Card className="mx-6 my-5">
+                <Card className="mx-4 md:mx-6 my-5">
                     <CardHeader>
                         <CardTitle>Government</CardTitle>
                         <CardDescription>Government ID details.</CardDescription>

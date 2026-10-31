@@ -24,7 +24,7 @@ const STEPS = ["personal", "employment", "government", "account"] as const
 type Step = (typeof STEPS)[number]
 
 const triggerClass =
-  "h-auto flex-none px-4 py-3 text-base " +
+  "h-auto flex-none px-3 md:px-4 py-3 text-sm md:text-base " +
   "after:bg-black group-data-horizontal/tabs:after:h-1 group-data-horizontal/tabs:after:-bottom-px"
 
 export default function EmployeeFormNav(){
@@ -37,9 +37,9 @@ export default function EmployeeFormNav(){
 
     return (
         <Tabs value={step} onValueChange={(value) => setStep(value as Step)}>
-            <header className="border-b border-gray-200 flex flex-col gap-3 px-10 pt-6 bg-[#ffffff]">
+            <header className="border-b border-gray-200 flex flex-col gap-3 px-4 lg:px-10 pt-6 bg-[#ffffff]">
                 <Button variant={'default'} size={'sm'} className={'self-start mb-4 gap-1'} onClick={() => navigate('/employees')}><MoveLeft />Back</Button>
-                <div className="flex justify-between">
+                <div className="flex flex-col lg:flex-row lg:justify-between">
                     {isLoading ? (
                         <div className="flex items-center gap-3 mb-6">
                             <Skeleton className="size-14 rounded-full" />
@@ -57,8 +57,8 @@ export default function EmployeeFormNav(){
                                 <AvatarFallback>{getInitials(employee.full_name)}</AvatarFallback>
                             </Avatar>
                             <div className="flex flex-col gap-1">
-                                <div className="flex items-center gap-2">
-                                    <span className="text-2xl font-medium">{employee.full_name}</span>
+                                <div className="flex flex-col items-start gap-1 lg:flex-row lg:items-center lg:gap-2">
+                                    <span className="text-xl lg:text-2xl font-medium">{employee.full_name}</span>
                                     <Badge
                                         className={cn(
                                             employee.is_active
@@ -90,7 +90,7 @@ export default function EmployeeFormNav(){
 
                     </div>
                 </div>
-                <TabsList variant="line" className="group-data-horizontal/tabs:h-auto p-0 gap-2">
+                <TabsList variant="line" className="group-data-horizontal/tabs:h-auto p-0 gap-2 max-w-full overflow-x-auto">
                     <TabsTrigger value="personal" className={triggerClass}>Personal</TabsTrigger>
                     <TabsTrigger value="employment" className={triggerClass}>Employment</TabsTrigger>
                     <TabsTrigger value="government" className={triggerClass}>Government</TabsTrigger>

@@ -60,7 +60,7 @@ export default function EmployeeAccountSection({ employee }: Props) {
     }    
     
     return (
-        <Card className="mx-6 my-5">
+        <Card className="mx-4 md:mx-6 my-5">
             <CardHeader>
                 <CardTitle>Account</CardTitle>
                 <CardDescription>Login access to the HRIS.</CardDescription>
