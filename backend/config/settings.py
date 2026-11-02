@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     # local
     "apps.users",
     "apps.employees",
+    "apps.attendance",
 ]
 
 MIDDLEWARE = [
